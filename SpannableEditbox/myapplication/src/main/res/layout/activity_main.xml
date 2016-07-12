@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:span="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.uilib.myapplication.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+
+    <com.uilib.inputlayout.InputLayout
+        android:id="@+id/inputlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.uilib.spannableeditbox.SpannableEditbox
+            android:id="@+id/edt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            span:bold="true"
+            span:italic="true"
+            span:underLine="true" />
+    </com.uilib.inputlayout.InputLayout>
+
+
+
+</RelativeLayout>

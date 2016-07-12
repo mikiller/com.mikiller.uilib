@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="clickableSpan" format="boolean" />
+    <attr name="bold" format="boolean" />
+    <attr name="italic" format="boolean" />
+    <attr name="underLine" format="boolean" />
+    <attr name="foregroundColor" format="boolean" />
+    <attr name="showToolbar" format="boolean" />
+
+    <declare-styleable name="SpannableEditbox">
+        <attr name="clickableSpan" />
+        <attr name="bold" />
+        <attr name="italic" />
+        <attr name="underLine" />
+        <attr name="foregroundColor" />
+        <attr name="showToolbar" />
+    </declare-styleable>
+
+    <declare-styleable name="Header">
+        <attr name="titleTextSize" format="dimension" />
+        <attr name="titleTextColor1" format="color" />
+        <attr name="titleText" format="string" />
+    </declare-styleable>
+</resources>
