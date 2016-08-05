@@ -26,11 +26,20 @@
             <!--span:underLine="true" />-->
     <!--</com.uilib.inputlayout.InputRelativeLayout>-->
 
-    <com.uilib.uploadimageview.MXUploadImageView
-        android:id="@+id/iv_upload"
-        android:layout_height="match_parent"
+    <!--<com.uilib.uploadimageview.MXUploadImageView-->
+        <!--android:id="@+id/iv_upload"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="match_parent"-->
+        <!--span:pgbType="circle"-->
+        <!--/>-->
+
+    <LinearLayout
+        android:id="@+id/ll_photo"
         android:layout_width="match_parent"
-        span:pgbType="circle"
-        />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/darker_gray"/>
+
+
 
 </RelativeLayout>

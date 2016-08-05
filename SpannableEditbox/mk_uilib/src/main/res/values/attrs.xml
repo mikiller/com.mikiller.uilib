@@ -27,5 +27,7 @@
             <enum name="line" value="0"/>
             <enum name="circle" value="1" />
         </attr>
+        <attr name="bgImage" format="reference"/>
+        <attr name="radio" format="dimension" />
     </declare-styleable>
 </resources>
