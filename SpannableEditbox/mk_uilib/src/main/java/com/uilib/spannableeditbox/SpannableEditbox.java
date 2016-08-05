@@ -110,6 +110,7 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
                 return false;
             }
         });
+        editText.focusEditor();
         btnBold = (ImageView) findViewById(R.id.action_bold);
         btnBold.setOnClickListener(this);
         btnBold.setVisibility(bold ? View.VISIBLE : View.GONE);
@@ -185,5 +186,9 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     public void setText(String text){
         if(!TextUtils.isEmpty(text))
             editText.setHtml(text);
+    }
+
+    public void focus(){
+        editText.focusEditor();
     }
 }

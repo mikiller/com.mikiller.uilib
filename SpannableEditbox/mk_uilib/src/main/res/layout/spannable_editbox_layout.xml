@@ -16,8 +16,7 @@
         re:paddingBottom="10"
         re:paddingLeft="10"
         re:paddingRight="10"
-        re:editorHeight="400"
-        re:editHint="Input..." />
+        re:editorHeight="400" />
 
     <LinearLayout
         android:id="@+id/toolbar"

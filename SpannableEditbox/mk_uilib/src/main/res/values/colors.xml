@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="edit_color">#000000</color>
     <color name="toolbarColor">#e6faf0</color>
+    <color name="mask">#b4333333</color>
 </resources>

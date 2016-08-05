@@ -21,4 +21,11 @@
         <attr name="titleTextColor1" format="color" />
         <attr name="titleText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="MXUploadImageView">
+        <attr name="pgbType" >
+            <enum name="line" value="0"/>
+            <enum name="circle" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>

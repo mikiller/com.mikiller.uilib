@@ -4,27 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context="com.uilib.myapplication.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Hello World!" />-->
 
-    <com.uilib.inputlayout.InputLayout
-        android:id="@+id/inputlayout"
+    <!--<com.uilib.inputlayout.InputRelativeLayout-->
+        <!--android:id="@+id/inputlayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<com.uilib.spannableeditbox.SpannableEditbox-->
+            <!--android:id="@+id/edt"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--span:bold="true"-->
+            <!--span:italic="true"-->
+            <!--span:underLine="true" />-->
+    <!--</com.uilib.inputlayout.InputRelativeLayout>-->
+
+    <com.uilib.uploadimageview.MXUploadImageView
+        android:id="@+id/iv_upload"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.uilib.spannableeditbox.SpannableEditbox
-            android:id="@+id/edt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            span:bold="true"
-            span:italic="true"
-            span:underLine="true" />
-    </com.uilib.inputlayout.InputLayout>
-
-
+        span:pgbType="circle"
+        />
 
 </RelativeLayout>
