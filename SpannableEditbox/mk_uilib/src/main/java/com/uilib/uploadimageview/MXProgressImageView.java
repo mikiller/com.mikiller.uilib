@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.uilib.BitmapUtils;
+import com.uilib.utils.BitmapUtils;
 import com.uilib.R;
 import com.uilib.mxprogressbar.MXProgressbar;
 

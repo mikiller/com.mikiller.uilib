@@ -11,7 +11,7 @@
         android:gravity="top"
         android:layout_above="@+id/toolbar"
         re:fontColor="@color/edit_color"
-        re:fontSize="20"
+        re:fontSize="15"
         re:paddingTop="10"
         re:paddingBottom="10"
         re:paddingLeft="10"

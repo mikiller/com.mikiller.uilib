@@ -5,12 +5,12 @@ import android.os.Message;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 
 import com.uilib.checkabletag.CheckableTag;
 import com.uilib.mxflowlayout.MXFlowLayout;
 import com.uilib.uploadimageview.MXProgressImageView;
+import com.uilib.utils.DisplayUtil;
 
 import android.os.Handler;
 

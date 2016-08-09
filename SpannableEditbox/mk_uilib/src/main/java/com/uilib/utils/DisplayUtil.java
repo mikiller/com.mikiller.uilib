@@ -1,4 +1,4 @@
-package com.uilib.myapplication;
+package com.uilib.utils;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
