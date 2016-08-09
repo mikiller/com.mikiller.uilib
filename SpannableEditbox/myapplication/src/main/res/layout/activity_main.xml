@@ -4,42 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    android:background="@android:color/white"
     tools:context="com.uilib.myapplication.MainActivity">
 
     <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Hello World!" />-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Hello World!" />-->
 
     <!--<com.uilib.inputlayout.InputRelativeLayout-->
-        <!--android:id="@+id/inputlayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:id="@+id/inputlayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-        <!--<com.uilib.spannableeditbox.SpannableEditbox-->
-            <!--android:id="@+id/edt"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--span:bold="true"-->
-            <!--span:italic="true"-->
-            <!--span:underLine="true" />-->
+    <!--<com.uilib.spannableeditbox.SpannableEditbox-->
+    <!--android:id="@+id/edt"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--span:bold="true"-->
+    <!--span:italic="true"-->
+    <!--span:underLine="true" />-->
     <!--</com.uilib.inputlayout.InputRelativeLayout>-->
 
     <!--<com.uilib.uploadimageview.MXUploadImageView-->
-        <!--android:id="@+id/iv_upload"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_width="match_parent"-->
-        <!--span:pgbType="circle"-->
-        <!--/>-->
+    <!--android:id="@+id/iv_upload"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_width="match_parent"-->
+    <!--span:pgbType="circle"-->
+    <!--/>-->
 
     <LinearLayout
         android:id="@+id/ll_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray"
+        android:orientation="horizontal" />
 
+    <com.uilib.checkabletag.CheckableTag
+        android:id="@+id/ckb_tag1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_photo"
+        span:isChecked="true"
+        span:needClose="false"/>
 
+    <com.uilib.checkabletag.CheckableTag
+        android:id="@+id/ckb_tag2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_photo"
+        android:layout_toRightOf="@id/ckb_tag1"
+        />
+
+    <com.uilib.mxflowlayout.MXFlowLayout
+        android:id="@+id/fl_tags"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ckb_tag1">
+
+    </com.uilib.mxflowlayout.MXFlowLayout>
 
 </RelativeLayout>

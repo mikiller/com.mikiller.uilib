@@ -1,19 +1,16 @@
 package com.uilib.myapplication;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.os.Message;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.WindowManager;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import com.uilib.BitmapUtils;
-import com.uilib.mxprogressbar.MXProgressbar;
-import com.uilib.uploadimageview.MXUploadImageView;
+import com.uilib.checkabletag.CheckableTag;
+import com.uilib.mxflowlayout.MXFlowLayout;
+import com.uilib.uploadimageview.MXProgressImageView;
 
 import android.os.Handler;
 
@@ -22,8 +19,10 @@ public class MainActivity extends Activity {
     //    ProgressBar linePgb;
 //    MXProgressbar circlePgb;
     LinearLayout ll_photo;
-    MXUploadImageView imageView;
+    MXProgressImageView imageView;
     MHandler handler;
+
+    MXFlowLayout fl_tags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,30 +43,34 @@ public class MainActivity extends Activity {
 //        });
 //
 //        edt.focus();
+        initPgsImageViewLayout();
+
+        initFlowLayout();
+
+    }
+
+    private void initPgsImageViewLayout(){
         handler = new MHandler();
         ll_photo = (LinearLayout) findViewById(R.id.ll_photo);
-//         linePgb = (ProgressBar) findViewById(R.id.pgb_line);
-//        circlePgb = (MXProgressbar) findViewById(R.id.pgb_circle);
-//        imageView = (MXUploadImageView) findViewById(R.id.iv_upload);
         int screenWidth = DisplayUtil.getScreenWidth(this);
         LinearLayout.LayoutParams lp;
         for (int i = 0; i < 4; i++) {
-            MXUploadImageView uploadImageView = new MXUploadImageView(this);
+            MXProgressImageView uploadImageView = new MXProgressImageView(this);
             lp = (LinearLayout.LayoutParams) uploadImageView.getLayoutParams();
             if(lp == null)
                 lp = new LinearLayout.LayoutParams(screenWidth / 4, screenWidth / 4, 1);
             lp.setMargins(5, 10, 5, 10);
             uploadImageView.setLayoutParams(lp);
             uploadImageView.setTag(i);
-            uploadImageView.setPgbType(MXUploadImageView.CIRCLE);
-            uploadImageView.setUploadState(MXUploadImageView.ImageState.STOP);
+            uploadImageView.setPgbType(MXProgressImageView.CIRCLE);
+            uploadImageView.setUploadState(MXProgressImageView.ImageState.STOP);
             uploadImageView.setBgImage(R.mipmap.aa);
             uploadImageView.setRadio(20);
             ll_photo.addView(uploadImageView);
         }
 
         for (int i = 0; i < 4; i++) {
-            final MXUploadImageView uiv = (MXUploadImageView) ll_photo.getChildAt(i);
+            final MXProgressImageView uiv = (MXProgressImageView) ll_photo.getChildAt(i);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -75,8 +78,6 @@ public class MainActivity extends Activity {
                     for (int i = 0; i < 101; i++) {
                         if (uiv.isRunning()) {
                             handler.obtainMessage(1, i, (Integer) uiv.getTag()).sendToTarget();
-                            if (i == 100)
-                                i = 0;
                             sleepTime++;
                         } else {
                             i--;
@@ -90,17 +91,65 @@ public class MainActivity extends Activity {
                 }
             }).start();
         }
+    }
 
+    private void initFlowLayout(){
+        fl_tags = (MXFlowLayout) findViewById(R.id.fl_tags);
+        for(int i = 0; i < 8; i++){
+            final CheckableTag tag = new CheckableTag(this);
+            tag.setNeedClose(i%2 == 0);
+            tag.setText("TEST DESK" + i);
+            tag.setListener(new CheckableTag.onCloseListener() {
+                @Override
+                public void onClose(View v) {
+                    fl_tags.removeView(v);
+                }
+            });
+            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(4,4,4,4);
+            tag.setLayoutParams(lp);
+            fl_tags.addView(tag);
+        }
 
     }
 
+    class ViewStateListener implements MXProgressImageView.onViewStateListener{
+
+        @Override
+        public void onStop() {
+
+        }
+
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onPause() {
+
+        }
+
+        @Override
+        public void onFailed() {
+
+        }
+
+        @Override
+        public void onSuccess() {
+
+        }
+    }
 
     class MHandler extends Handler {
         @Override
         public void dispatchMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    ((MXUploadImageView)ll_photo.getChildAt(msg.arg2)).setProgress(msg.arg1);
+                    if(msg.arg2 ==2 && msg.arg1 > 30){
+                        ((MXProgressImageView)ll_photo.getChildAt(msg.arg2)).setProgress(-1);
+                    }else
+                        ((MXProgressImageView)ll_photo.getChildAt(msg.arg2)).setProgress(msg.arg1);
                     break;
             }
 

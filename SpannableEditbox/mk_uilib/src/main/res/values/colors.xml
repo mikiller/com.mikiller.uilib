@@ -6,4 +6,7 @@
     <color name="edit_color">#000000</color>
     <color name="toolbarColor">#e6faf0</color>
     <color name="mask">#b4333333</color>
+    <color name="tagTextBlue">#00befa</color>
+    <color name="tagBgBlue">#2600bcf7</color>
+    <color name="tagBgGray">#c8c8c8</color>
 </resources>

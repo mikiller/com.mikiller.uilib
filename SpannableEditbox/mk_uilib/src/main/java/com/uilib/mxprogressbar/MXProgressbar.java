@@ -54,13 +54,12 @@ public class MXProgressbar extends View {
         pauseBmp = BitmapFactory.decodeResource(res, R.drawable.pause);
         playBmp = BitmapFactory.decodeResource(res, R.drawable.play);
 
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isRunning = !isRunning;
-                v.invalidate();
-            }
-        });
+//        this.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onSwitchClicked(v);
+//            }
+//        });
     }
 
     @Override
@@ -110,5 +109,14 @@ public class MXProgressbar extends View {
 
     public boolean isRunning(){
         return isRunning;
+    }
+
+    public void setRunning(boolean isRunning){
+        this.isRunning = isRunning;
+    }
+
+    public void onSwitchClicked(View v){
+        isRunning = !isRunning;
+        v.invalidate();
     }
 }
