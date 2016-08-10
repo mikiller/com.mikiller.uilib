@@ -60,7 +60,10 @@
         android:id="@+id/fl_tags"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_below="@id/ckb_tag1">
+        android:layout_below="@id/ckb_tag1"
+        span:hint="@string/app_name"
+        span:hintColor="@color/tagBgGray"
+        span:hintSize="14sp">
 
     </com.uilib.mxflowlayout.MXFlowLayout>
 

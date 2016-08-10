@@ -9,8 +9,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.uilib.R;
@@ -49,6 +51,11 @@ public class CheckableTag extends LinearLayout implements View.OnClickListener{
         return isChecked;
     }
 
+    public void setChecked(boolean isChecked){
+        this.isChecked = isChecked;
+        invalidate();
+    }
+
     public onCloseListener getListener() {
         return listener;
     }
@@ -82,7 +89,8 @@ public class CheckableTag extends LinearLayout implements View.OnClickListener{
         setWillNotDraw(false);
         LayoutInflater.from(context).inflate(R.layout.tag_textview_layout, this, true);
         ll_background = (LinearLayout) findViewById(R.id.ll_tag);
-        ll_background.setOnClickListener(this);
+        if(isClickable())
+            ll_background.setOnClickListener(this);
         tv_tag = (TextView) findViewById(R.id.tv_tag);
         if(!TextUtils.isEmpty(text))
             tv_tag.setText(text);
@@ -110,8 +118,7 @@ public class CheckableTag extends LinearLayout implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.ll_tag){
-            isChecked = !isChecked;
-            invalidate();
+            setChecked(!isChecked);
         }else if(v.getId() == R.id.iv_close){
             if(listener != null)
                 listener.onClose(this);
@@ -120,6 +127,59 @@ public class CheckableTag extends LinearLayout implements View.OnClickListener{
 
     public interface onCloseListener{
         void onClose(View v);
+    }
+
+    public static class CheckableTagBuilder{
+        Context mContext;
+        boolean isChecked;
+        boolean needClose;
+        String text;
+        onCloseListener listener;
+        ViewGroup.MarginLayoutParams layoutParams;
+
+        public CheckableTagBuilder(Context context) {
+            mContext = context;
+        }
+
+        public CheckableTagBuilder setIsChecked(boolean checked){
+            isChecked = checked;
+            return this;
+        }
+
+        public CheckableTagBuilder setNeedClose(boolean needClose){
+            this.needClose = needClose;
+            return this;
+        }
+
+        public CheckableTagBuilder setText(String text){
+            this.text = text;
+            return this;
+        }
+
+        public CheckableTagBuilder setOnCloseListener(onCloseListener listener){
+            this.listener = listener;
+            return this;
+        }
+
+        public CheckableTagBuilder setLayoutParams(ViewGroup.MarginLayoutParams lp){
+            layoutParams = lp;
+            return this;
+        }
+
+        public CheckableTag build(){
+            CheckableTag tag = new CheckableTag(mContext);
+            tag.setChecked(isChecked);
+            tag.setNeedClose(needClose);
+            tag.setText(text);
+            if(listener != null)
+                tag.setListener(listener);
+            if(layoutParams == null) {
+                layoutParams = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(4, 4, 4, 4);
+            }
+            tag.setLayoutParams(layoutParams);
+            return tag;
+        }
     }
 
 }

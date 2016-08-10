@@ -1,10 +1,18 @@
 package com.uilib.mxflowlayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.uilib.R;
+import com.uilib.utils.DisplayUtil;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +22,35 @@ import java.util.List;
  */
 public class MXFlowLayout extends ViewGroup{
     List<List<View>> allChildren = new ArrayList<>();
+    String hint;
+    float hintSize;
+    int hintColor;
+    int childMargin;
+    TextView tv_hint;
 
     public MXFlowLayout(Context context) {
         super(context);
+        initParams(context, null, 0);
     }
 
     public MXFlowLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initParams(context, attrs, 0);
     }
 
     public MXFlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initParams(context, attrs, defStyleAttr);
+    }
+
+    private void initParams(Context context, AttributeSet attrs, int defStyleAttr){
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MXFlowLayout);
+        if(typedArray != null){
+            hint = typedArray.getString(R.styleable.MXFlowLayout_hint);
+            hintSize = DisplayUtil.px2dip(getContext(), typedArray.getDimension(R.styleable.MXFlowLayout_hintSize, 20));
+            hintColor = typedArray.getColor(R.styleable.MXFlowLayout_hintColor, getResources().getColor(R.color.tagBgGray));
+            childMargin = (int) typedArray.getDimension(R.styleable.MXFlowLayout_childMargin, 4);
+        }
     }
 
     @Override
@@ -45,6 +71,18 @@ public class MXFlowLayout extends ViewGroup{
 
         if(widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST){
             int childCount = getChildCount();
+            if(childCount == 0 && !TextUtils.isEmpty(hint)){
+                tv_hint = new TextView(getContext());
+                tv_hint.setText(hint);
+                tv_hint.setTextColor(hintColor);
+                tv_hint.setTextSize(hintSize);
+                MarginLayoutParams lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                lp.setMargins(childMargin,childMargin,childMargin,childMargin);
+                tv_hint.setLayoutParams(lp);
+                this.addView(tv_hint);
+                childCount = 1;
+            }
+
             int lineWidth = 0, lineHeight = 0;
             for(int i = 0; i < childCount; i++){
                 View child = getChildAt(i);
@@ -82,11 +120,18 @@ public class MXFlowLayout extends ViewGroup{
         List<Integer> lineHeights = new ArrayList<>();
         int lineWidth = 0, lineHeight = 0;
         int width = getWidth();
+        if(getChildCount() > 1 && getChildAt(0).equals(tv_hint)){
+            removeView(tv_hint);
+        }
         int childCount = getChildCount();
         List<View> lineViews = new ArrayList<>();
         for(int i = 0; i < childCount; i++){
             View child = getChildAt(i);
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            if(lp == null){
+                lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                lp.setMargins(childMargin,childMargin,childMargin,childMargin);
+            }
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
             if(lineWidth + childWidth > width){
@@ -127,5 +172,10 @@ public class MXFlowLayout extends ViewGroup{
             top += lineHeight;
         }
 
+    }
+
+    public void setHint(String text){
+        if(!TextUtils.isEmpty(text))
+            hint = text;
     }
 }

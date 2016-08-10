@@ -95,21 +95,21 @@ public class MainActivity extends Activity {
 
     private void initFlowLayout(){
         fl_tags = (MXFlowLayout) findViewById(R.id.fl_tags);
-        for(int i = 0; i < 8; i++){
-            final CheckableTag tag = new CheckableTag(this);
-            tag.setNeedClose(i%2 == 0);
-            tag.setText("TEST DESK" + i);
-            tag.setListener(new CheckableTag.onCloseListener() {
-                @Override
-                public void onClose(View v) {
-                    fl_tags.removeView(v);
-                }
-            });
-            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(4,4,4,4);
-            tag.setLayoutParams(lp);
-            fl_tags.addView(tag);
-        }
+//        for(int i = 0; i < 8; i++){
+//            final CheckableTag tag = new CheckableTag(this);
+//            tag.setNeedClose(true);
+//            tag.setText("TEST DESK" + i);
+//            tag.setListener(new CheckableTag.onCloseListener() {
+//                @Override
+//                public void onClose(View v) {
+//                    fl_tags.removeView(v);
+//                }
+//            });
+//            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            lp.setMargins(4,4,4,4);
+//            tag.setLayoutParams(lp);
+//            fl_tags.addView(tag);
+//        }
 
     }
 

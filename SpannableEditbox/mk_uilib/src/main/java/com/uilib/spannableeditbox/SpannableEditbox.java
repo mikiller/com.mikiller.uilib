@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -104,10 +105,19 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
         });
         editText.setOnTouchListener(new OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ((WebView)v).requestDisallowInterceptTouchEvent(true);
-                showToolbar();
+            public boolean onTouch(final View v, MotionEvent event) {
+                if(event.getAction() == (MotionEvent.ACTION_DOWN)) {
+                    ((WebView) v).requestDisallowInterceptTouchEvent(true);
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showToolbar();
+                        }
+                    },100l);
+
+                }
                 return false;
+
             }
         });
         editText.focusEditor();
@@ -181,6 +191,10 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     public void hideToolbar(){
         if(toolbar != null)
             toolbar.setVisibility(View.GONE);
+    }
+
+    public boolean isToolbarShow(){
+        return toolbar.getVisibility() == View.VISIBLE;
     }
 
     public void setText(String text){

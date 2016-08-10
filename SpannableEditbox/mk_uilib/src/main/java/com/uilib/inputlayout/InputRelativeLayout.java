@@ -1,6 +1,7 @@
 package com.uilib.inputlayout;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -15,14 +16,17 @@ public class InputRelativeLayout extends RelativeLayout {
 
     public InputRelativeLayout(Context context) {
         super(context);
+        setWillNotDraw(false);
     }
 
     public InputRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setWillNotDraw(false);
     }
 
     public InputRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setWillNotDraw(false);
     }
 
     public void setKeyboardStateListener(KeyboardStateListener listener){
@@ -30,8 +34,8 @@ public class InputRelativeLayout extends RelativeLayout {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         if (isKeyboardShown(this.getRootView())) {
             if(listener != null){
                 listener.onKeyboardShown();

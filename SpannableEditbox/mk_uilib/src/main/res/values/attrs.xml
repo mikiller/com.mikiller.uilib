@@ -36,4 +36,11 @@
         <attr name="needClose" format="boolean" />
         <attr name="text" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="MXFlowLayout">
+        <attr name="hint" format="string" />
+        <attr name="hintSize" format="dimension" />
+        <attr name="hintColor" format="color" />
+        <attr name="childMargin" format="dimension" />
+    </declare-styleable>
 </resources>
