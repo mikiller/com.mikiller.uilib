@@ -20,8 +20,9 @@ import java.util.List;
 /**
  * Created by Mikiller on 2016/8/8.
  */
-public class MXFlowLayout extends ViewGroup{
+public class MXFlowLayout extends ViewGroup {
     List<List<View>> allChildren = new ArrayList<>();
+    List<String> childrenTags = new ArrayList<>();
     String hint;
     float hintSize;
     int hintColor;
@@ -43,9 +44,9 @@ public class MXFlowLayout extends ViewGroup{
         initParams(context, attrs, defStyleAttr);
     }
 
-    private void initParams(Context context, AttributeSet attrs, int defStyleAttr){
+    private void initParams(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MXFlowLayout);
-        if(typedArray != null){
+        if (typedArray != null) {
             hint = typedArray.getString(R.styleable.MXFlowLayout_hint);
             hintSize = DisplayUtil.px2dip(getContext(), typedArray.getDimension(R.styleable.MXFlowLayout_hintSize, 20));
             hintColor = typedArray.getColor(R.styleable.MXFlowLayout_hintColor, getResources().getColor(R.color.tagBgGray));
@@ -69,41 +70,41 @@ public class MXFlowLayout extends ViewGroup{
 
         int width = 0, height = 0;
 
-        if(widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST){
+        if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST) {
             int childCount = getChildCount();
-            if(childCount == 0 && !TextUtils.isEmpty(hint)){
+            if (childCount == 0 && !TextUtils.isEmpty(hint)) {
                 tv_hint = new TextView(getContext());
                 tv_hint.setText(hint);
                 tv_hint.setTextColor(hintColor);
                 tv_hint.setTextSize(hintSize);
                 MarginLayoutParams lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                lp.setMargins(childMargin,childMargin,childMargin,childMargin);
+                lp.setMargins(childMargin, childMargin, childMargin, childMargin);
                 tv_hint.setLayoutParams(lp);
                 this.addView(tv_hint);
                 childCount = 1;
             }
 
             int lineWidth = 0, lineHeight = 0;
-            for(int i = 0; i < childCount; i++){
+            for (int i = 0; i < childCount; i++) {
                 View child = getChildAt(i);
                 measureChild(child, widthMeasureSpec, heightMeasureSpec);
                 MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-                if(lp == null) {
+                if (lp == null) {
                     lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 }
                 int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
                 int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-                if(lineWidth + childWidth > sizeWidth){
+                if (lineWidth + childWidth > sizeWidth) {
                     width = Math.max(childWidth, lineWidth);
                     lineWidth = childWidth;
                     height += lineHeight;
                     lineHeight = childHeight;
-                }else {
+                } else {
                     lineWidth += childWidth;
                     lineHeight = Math.max(lineHeight, childHeight);
                 }
 
-                if(i == childCount - 1){
+                if (i == childCount - 1) {
                     width = Math.max(lineWidth, width);
                     height += lineHeight;
                 }
@@ -117,33 +118,35 @@ public class MXFlowLayout extends ViewGroup{
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         allChildren.clear();
+        childrenTags.clear();
         List<Integer> lineHeights = new ArrayList<>();
         int lineWidth = 0, lineHeight = 0;
         int width = getWidth();
-        if(getChildCount() > 1 && getChildAt(0).equals(tv_hint)){
+        if (getChildCount() > 1 && getChildAt(0).equals(tv_hint)) {
             removeView(tv_hint);
         }
         int childCount = getChildCount();
         List<View> lineViews = new ArrayList<>();
-        for(int i = 0; i < childCount; i++){
+        for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-            if(lp == null){
+            if (lp == null) {
                 lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                lp.setMargins(childMargin,childMargin,childMargin,childMargin);
+                lp.setMargins(childMargin, childMargin, childMargin, childMargin);
             }
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
             int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            if(lineWidth + childWidth > width){
+            if (lineWidth + childWidth > width) {
                 lineHeights.add(lineHeight);
                 allChildren.add(lineViews);
                 lineWidth = 0;
                 lineViews = new ArrayList<>();
             }
-                lineWidth += childWidth;
-                lineHeight = Math.max(lineHeight, childHeight);
-                lineViews.add(child);
-
+            lineWidth += childWidth;
+            lineHeight = Math.max(lineHeight, childHeight);
+            lineViews.add(child);
+            if(child.getTag() != null)
+                childrenTags.add((String) child.getTag());
 
         }
         lineHeights.add(lineHeight);
@@ -151,13 +154,13 @@ public class MXFlowLayout extends ViewGroup{
 
         int left = 0, top = 0;
         int lineNums = allChildren.size();
-        for(int i = 0; i < lineNums; i++){
+        for (int i = 0; i < lineNums; i++) {
             List<View> lvs = allChildren.get(i);
             lineHeight = lineHeights.get(i);
 
-            for(int j = 0; j < lvs.size(); j++){
+            for (int j = 0; j < lvs.size(); j++) {
                 View c = lvs.get(j);
-                if(c.getVisibility() == GONE)
+                if (c.getVisibility() == GONE)
                     continue;
                 MarginLayoutParams lp = (MarginLayoutParams) c.getLayoutParams();
                 int lc = left + lp.leftMargin;
@@ -174,8 +177,22 @@ public class MXFlowLayout extends ViewGroup{
 
     }
 
-    public void setHint(String text){
-        if(!TextUtils.isEmpty(text))
+    public void setHint(String text) {
+        if (!TextUtils.isEmpty(text))
             hint = text;
+    }
+
+    public List<String> getAllTags() {
+        return childrenTags;
+    }
+
+    public String getTagsString(String separator){
+        if(childrenTags.size() == 0)
+            return "";
+        String tagStr = new String();
+        for(String tag : childrenTags){
+            tagStr = tagStr.concat(tag).concat(separator);
+        }
+        return tagStr.substring(0, tagStr.lastIndexOf(separator));
     }
 }

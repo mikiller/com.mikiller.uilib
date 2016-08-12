@@ -171,6 +171,7 @@ public class CheckableTag extends LinearLayout implements View.OnClickListener{
             tag.setChecked(isChecked);
             tag.setNeedClose(needClose);
             tag.setText(text);
+            tag.setTag(text);
             if(listener != null)
                 tag.setListener(listener);
             if(layoutParams == null) {
