@@ -113,7 +113,7 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
                         public void run() {
                             showToolbar();
                         }
-                    },100l);
+                    },200l);
 
                 }
                 return false;

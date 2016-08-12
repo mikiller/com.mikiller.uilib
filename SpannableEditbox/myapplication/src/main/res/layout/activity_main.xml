@@ -67,4 +67,17 @@
 
     </com.uilib.mxflowlayout.MXFlowLayout>
 
+    <com.uilib.mxfloatactbutton.MXFloatActButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ckb_tag1"
+        span:backgroundTint="@color/colorPrimary"
+        span:txtColor="@android:color/white"
+        span:txtSize="16sp"
+        span:textMargin="5dp"
+        span:textGravity="RIGHT_BOTTOM"
+        android:src="@drawable/pause"
+        android:clickable="true"/>
+
 </RelativeLayout>

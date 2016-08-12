@@ -1,13 +1,17 @@
 package com.uilib.myapplication;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.uilib.checkabletag.CheckableTag;
+import com.uilib.mxfloatactbutton.MXFloatActButton;
 import com.uilib.mxflowlayout.MXFlowLayout;
 import com.uilib.uploadimageview.MXProgressImageView;
 import com.uilib.utils.DisplayUtil;
@@ -23,6 +27,7 @@ public class MainActivity extends Activity {
     MHandler handler;
 
     MXFlowLayout fl_tags;
+    MXFloatActButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class MainActivity extends Activity {
         initPgsImageViewLayout();
 
         initFlowLayout();
+
+        initFloatActButton();
 
     }
 
@@ -111,6 +118,28 @@ public class MainActivity extends Activity {
 //            fl_tags.addView(tag);
 //        }
 
+    }
+
+    int num = 0;
+    private void initFloatActButton(){
+        fab = (MXFloatActButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fab.setSrcText(String.valueOf(num++));
+                fab.setSelected(!fab.isSelected());
+                if(fab.isSelected()){
+                    fab.setTextColor(getResources().getColor(R.color.tagTextBlue));
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+                    fab.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+                }else{
+                    fab.setTextColor(Color.WHITE);
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.tagTextBlue)));
+                    fab.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                }
+
+            }
+        });
     }
 
     class ViewStateListener implements MXProgressImageView.onViewStateListener{

@@ -43,4 +43,17 @@
         <attr name="hintColor" format="color" />
         <attr name="childMargin" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="MXFloatActButton">
+        <attr name="srcText" format="string"/>
+        <attr name="txtSize" format="dimension" />
+        <attr name="textMargin" format="dimension" />
+        <attr name="txtColor" format="color" />
+        <attr name="textGravity" >
+            <enum name="LEFT_TOP" value="0" />
+            <enum name="RIGHT_TOP" value="1" />
+            <enum name="LEFT_BOTTOM" value="2" />
+            <enum name="RIGHT_BOTTOM" value="3" />
+        </attr>
+    </declare-styleable>
 </resources>
