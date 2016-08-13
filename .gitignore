@@ -1,0 +1,5 @@
+SpannableEditbox/.gradle/
+SpannableEditbox/.idea/
+SpannableEditbox/build/
+SpannableEditbox/local.properties
+*.iml
