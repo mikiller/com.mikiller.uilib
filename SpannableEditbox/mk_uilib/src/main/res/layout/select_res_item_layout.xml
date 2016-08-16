@@ -24,6 +24,8 @@
         android:src="@mipmap/delete"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"/>
 
 </RelativeLayout>

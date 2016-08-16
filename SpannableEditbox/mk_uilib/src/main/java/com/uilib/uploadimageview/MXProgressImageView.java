@@ -6,6 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.GradientDrawable;
+import android.media.ThumbnailUtils;
+import android.media.audiofx.NoiseSuppressor;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +22,18 @@ import com.uilib.utils.BitmapUtils;
 import com.uilib.R;
 import com.uilib.mxprogressbar.MXProgressbar;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created by Mikiller on 2016/8/4.
  */
-public class MXProgressImageView extends RelativeLayout implements View.OnClickListener{
-    public enum ImageState{
+public class MXProgressImageView extends RelativeLayout implements View.OnClickListener {
+    public enum ImageState {
         STOP, PAUSE, START, FAILED, SUCCESS
     }
+
     public final static int LINE = 0;
     public final static int CIRCLE = 1;
 
@@ -38,6 +47,11 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
     private int bgImage;
     private Bitmap bgBmp;
     private int radio;
+    private Matrix matrix;
+    private boolean needMatrix = false;
+    private boolean needUpdate;
+
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private String filePath = null;
 
@@ -62,9 +76,9 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         initParams(context, attrs, defStyleAttr);
     }
 
-    private void initParams(Context context, AttributeSet attrs, int defStyleAttr){
+    private void initParams(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MXProgressImageView);
-        if(typedArray != null){
+        if (typedArray != null) {
             pgbType = typedArray.getInt(R.styleable.MXProgressImageView_pgbType, -1);
             bgImage = typedArray.getResourceId(R.styleable.MXProgressImageView_bgImage, NO_ID);
             radio = (int) typedArray.getDimension(R.styleable.MXProgressImageView_radio, 0f);
@@ -95,8 +109,10 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         return bgImage;
     }
 
-    public void setBgImage(int bgImage) {
+    public void setBgImage(final int bgImage) {
         this.bgImage = bgImage;
+        filePath = null;
+        needUpdate = true;
     }
 
     public Bitmap getBgBmp() {
@@ -105,6 +121,7 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     public void setBgBmp(Bitmap bgBmp) {
         this.bgBmp = bgBmp;
+        needUpdate = true;
     }
 
     public int getRadio() {
@@ -119,8 +136,10 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
+    public void setFilePath(final String filePath) {
         this.filePath = filePath;
+        bgImage = NO_ID;
+        needUpdate = true;
     }
 
     public ImageState getUploadState() {
@@ -137,6 +156,44 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     public void setListener(onViewStateListener listener) {
         this.listener = listener;
+    }
+
+    private void updateBgBmp() {
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!TextUtils.isEmpty(filePath)) {
+                    if (filePath.endsWith(".3gp") || filePath.endsWith(".mp4"))
+                        bgBmp = getVidioBitmap(filePath, getMeasuredWidth(), getMeasuredHeight(), MediaStore.Images.Thumbnails.MICRO_KIND);
+                    else
+                        bgBmp = BitmapUtils.decodeSampleBmpFromFile(filePath, getMeasuredWidth(), getMeasuredHeight());
+                } else if (bgImage != NO_ID) {
+                    bgBmp = BitmapUtils.decodeSampleBmpFromRes(getResources(), bgImage, getMeasuredWidth(), getMeasuredHeight());
+                }
+                if (bgBmp == null) {
+                    bgImage = R.mipmap.default_icon;
+                    bgBmp = BitmapUtils.decodeSampleBmpFromRes(getResources(), bgImage, getMeasuredWidth(), getMeasuredHeight());
+                }
+                if (getMeasuredWidth() >= bgBmp.getWidth() && getMeasuredHeight() >= bgBmp.getHeight()) {
+                    matrix = BitmapUtils.getScaleMatrix(bgBmp.getWidth(), bgBmp.getHeight(), getMeasuredWidth(), getMeasuredHeight());
+                    bgBmp = BitmapUtils.drawRoundBmp(bgBmp, radio);
+                    needMatrix = true;
+                } else {
+                    if (bgBmp.getWidth() < getMeasuredWidth() || bgBmp.getHeight() < getMeasuredHeight()) {
+                        bgBmp = Bitmap.createScaledBitmap(bgBmp, getMeasuredWidth(), getMeasuredHeight(), false);
+                    }
+                    bgBmp = BitmapUtils.drawRoundBmp(BitmapUtils.getCenterSquareBmp(bgBmp, getMeasuredWidth(), getMeasuredHeight()), radio);
+                    needMatrix = false;
+                }
+                needUpdate = false;
+                MXProgressImageView.this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        invalidate();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -156,16 +213,10 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         GradientDrawable gd = (GradientDrawable) mask.getBackground();
         gd.setCornerRadius(radio);
         mask.setBackgroundDrawable(gd);
-
-        if(bgImage != NO_ID && bgBmp == null) {
-            bgBmp = BitmapUtils.decodeSampleBmpFromRes(getResources(), bgImage, getWidth(), getHeight());
-        }else if(filePath != null && bgBmp == null){
-            bgBmp = BitmapUtils.decodeSampleBmpFromFile(filePath, getWidth(), getHeight());
-        }
     }
 
-    private void setPgsBarVisibility(){
-        switch (pgbType){
+    private void setPgsBarVisibility() {
+        switch (pgbType) {
             case 0:
                 linePgsBar.setVisibility((uploadState == ImageState.START || uploadState == ImageState.PAUSE) ? View.VISIBLE : View.GONE);
                 break;
@@ -178,24 +229,76 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
-        if(bgBmp != null) {
-            if(getWidth() >= bgBmp.getWidth() && getHeight() >= bgBmp.getHeight()){
-                Matrix matrix = BitmapUtils.getScaleMatrix(bgBmp.getWidth(), bgBmp.getHeight(), getWidth(), getHeight());
-                canvas.drawBitmap(BitmapUtils.drawRoundBmp(bgBmp, radio), matrix, null);
-                return;
-            }
-
-            if(bgBmp.getWidth() < getWidth() || bgBmp.getHeight() < getHeight()){
-                bgBmp = Bitmap.createScaledBitmap(bgBmp,getWidth(), getHeight(), false);
-            }
-            canvas.drawBitmap(BitmapUtils.drawRoundBmp(BitmapUtils.getCenterSquareBmp(bgBmp, getWidth(), getHeight()), radio), 0, 0, null);
+        if(needUpdate){
+            updateBgBmp();
+        }else{
+            if (needMatrix) {
+                canvas.drawBitmap(bgBmp, matrix, null);
+            } else
+                canvas.drawBitmap(bgBmp, 0, 0, null);
         }
+
+
+//        if (bgBmp != null && !bgBmp.isRecycled()) {
+////            updateBgBmp(canvas);
+//            if (needMatrix) {
+//                canvas.drawBitmap(bgBmp, matrix, null);
+//            } else
+//                canvas.drawBitmap(bgBmp, 0, 0, null);
+////            if (getWidth() >= bgBmp.getWidth() && getHeight() >= bgBmp.getHeight()) {
+////                Matrix matrix = BitmapUtils.getScaleMatrix(bgBmp.getWidth(), bgBmp.getHeight(), getWidth(), getHeight());
+////                canvas.drawBitmap(BitmapUtils.drawRoundBmp(bgBmp, radio), matrix, null);
+////                return;
+////            }
+////
+////            if (bgBmp.getWidth() < getWidth() || bgBmp.getHeight() < getHeight()) {
+////                bgBmp = Bitmap.createScaledBitmap(bgBmp, getWidth(), getHeight(), false);
+////            }
+////            canvas.drawBitmap(BitmapUtils.drawRoundBmp(BitmapUtils.getCenterSquareBmp(bgBmp, getWidth(), getHeight()), radio), 0, 0, null);
+//
+//        } else {
+//            updateBgBmp();
+////            post(new Runnable() {
+////                @Override
+////                public void run() {
+//////
+//////                    if (!TextUtils.isEmpty(filePath)) {
+//////                        if (filePath.endsWith(".3gp") || filePath.endsWith(".mp4"))
+//////                            bgBmp = getVidioBitmap(filePath, 150, 150, MediaStore.Images.Thumbnails.MICRO_KIND);
+//////                        else
+//////                            bgBmp = BitmapUtils.decodeSampleBmpFromFile(filePath, getWidth(), getHeight());
+//////                    } else if (bgImage != NO_ID) {
+//////                        bgBmp = BitmapUtils.decodeSampleBmpFromRes(getResources(), bgImage, getWidth(), getHeight());
+//////                    }
+//////
+////
+////                    invalidate();
+////                }
+////            });
+//        }
     }
 
-    public void setProgress(int progress){
-        switch (pgbType){
+    private Bitmap getVidioBitmap(String path, int width, int height, int microKind) {
+        // 定義一個Bitmap對象bitmap；
+        Bitmap bitmap = null;
+
+        // ThumbnailUtils類的截取的圖片是保持原始比例的，但是本人發現顯示在ImageView控件上有时候有部分沒顯示出來；
+        // 調用ThumbnailUtils類的靜態方法createVideoThumbnail獲取視頻的截圖；
+        bitmap = ThumbnailUtils.createVideoThumbnail(path, microKind);
+
+        // 調用ThumbnailUtils類的靜態方法extractThumbnail將原圖片（即上方截取的圖片）轉化為指定大小；
+        // 最後一個參數的具體含義我也不太清楚，因為是閉源的；
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+
+        // 放回bitmap对象；
+        return bitmap;
+
+    }
+
+    public void setProgress(int progress) {
+        switch (pgbType) {
             case 0:
                 linePgsBar.setProgress(progress);
                 break;
@@ -205,37 +308,37 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
             default:
                 break;
         }
-        if(progress == 100){
+        if (progress == 100) {
             onSuccess();
-        }else if(progress == -1){
+        } else if (progress == -1) {
             onFailed();
         }
     }
 
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return circlePgsBar.isRunning();
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ll_refresh){
+        if (v.getId() == R.id.ll_refresh) {
             onRestart(v);
-        }else if(v.getId() == R.id.tv_wait){
+        } else if (v.getId() == R.id.tv_wait) {
             onStart(v);
-        }else if(v.getId() == R.id.pgb_circle){
+        } else if (v.getId() == R.id.pgb_circle) {
             circlePgsBar.onSwitchClicked(v);
-            if(isRunning()){
+            if (isRunning()) {
                 onContinue();
-            }else{
+            } else {
                 onPause();
             }
-        }else if(v.getId() == R.id.rl_background){
+        } else if (v.getId() == R.id.rl_background) {
             //show preview
         }
     }
 
-    protected void onStop(){
+    protected void onStop() {
         uploadState = ImageState.STOP;
         tv_wait.setVisibility(View.VISIBLE);
         mask.setVisibility(View.VISIBLE);
@@ -243,59 +346,63 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         circlePgsBar.setRunning(false);
         setPgsBarVisibility();
         ll_refresh.setVisibility(View.GONE);
-        if(listener != null)
+        if (listener != null)
             listener.onStop();
     }
 
-    protected void onStart(View v){
+    protected void onStart(View v) {
         uploadState = ImageState.START;
         v.setVisibility(View.GONE);
         setPgsBarVisibility();
         circlePgsBar.setRunning(true);
-        if(listener != null)
+        if (listener != null)
             listener.onStart();
     }
 
-    protected void onRestart(View v){
+    protected void onRestart(View v) {
         setProgress(0);
         onStart(v);
     }
 
-    protected void onPause(){
+    protected void onPause() {
         uploadState = ImageState.PAUSE;
-        if(listener != null)
+        if (listener != null)
             listener.onPause();
     }
 
-    protected void onContinue()
-    {
+    protected void onContinue() {
         uploadState = ImageState.START;
-        if(listener != null)
+        if (listener != null)
             listener.onStart();
     }
-    protected void onFailed(){
+
+    protected void onFailed() {
         uploadState = ImageState.FAILED;
         ll_refresh.setVisibility(View.VISIBLE);
         setProgress(0);
         setPgsBarVisibility();
-        if(listener != null){
+        if (listener != null) {
             listener.onFailed();
         }
     }
 
-    protected void onSuccess(){
+    protected void onSuccess() {
         uploadState = ImageState.SUCCESS;
         mask.setVisibility(View.GONE);
         setPgsBarVisibility();
-        if(listener != null)
+        if (listener != null)
             listener.onSuccess();
     }
 
-    public interface onViewStateListener{
+    public interface onViewStateListener {
         void onStop();
+
         void onStart();
+
         void onPause();
+
         void onFailed();
+
         void onSuccess();
     }
 }

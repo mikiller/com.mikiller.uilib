@@ -33,12 +33,10 @@
     <!--span:pgbType="circle"-->
     <!--/>-->
 
-    <LinearLayout
+    <com.uilib.mxselectreslayout.MXSelectResLayout
         android:id="@+id/ll_photo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal" />
+        android:layout_height="wrap_content" />
 
     <com.uilib.checkabletag.CheckableTag
         android:id="@+id/ckb_tag1"

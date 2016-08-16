@@ -13,16 +13,20 @@ import android.widget.LinearLayout;
 import com.uilib.checkabletag.CheckableTag;
 import com.uilib.mxfloatactbutton.MXFloatActButton;
 import com.uilib.mxflowlayout.MXFlowLayout;
+import com.uilib.mxselectreslayout.MXSelectResLayout;
 import com.uilib.uploadimageview.MXProgressImageView;
 import com.uilib.utils.DisplayUtil;
 
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends Activity {
     //    ProgressBar linePgb;
 //    MXProgressbar circlePgb;
-    LinearLayout ll_photo;
+    MXSelectResLayout ll_photo;
     MXProgressImageView imageView;
     MHandler handler;
 
@@ -48,7 +52,9 @@ public class MainActivity extends Activity {
 //        });
 //
 //        edt.focus();
-        initPgsImageViewLayout();
+//        initPgsImageViewLayout();
+
+        initLl_content();
 
         initFlowLayout();
 
@@ -56,48 +62,67 @@ public class MainActivity extends Activity {
 
     }
 
-    private void initPgsImageViewLayout(){
-        handler = new MHandler();
-        ll_photo = (LinearLayout) findViewById(R.id.ll_photo);
-        int screenWidth = DisplayUtil.getScreenWidth(this);
-        LinearLayout.LayoutParams lp;
-        for (int i = 0; i < 4; i++) {
-            MXProgressImageView uploadImageView = new MXProgressImageView(this);
-            lp = (LinearLayout.LayoutParams) uploadImageView.getLayoutParams();
-            if(lp == null)
-                lp = new LinearLayout.LayoutParams(screenWidth / 4, screenWidth / 4, 1);
-            lp.setMargins(5, 10, 5, 10);
-            uploadImageView.setLayoutParams(lp);
-            uploadImageView.setTag(i);
-            uploadImageView.setPgbType(MXProgressImageView.CIRCLE);
-            uploadImageView.setUploadState(MXProgressImageView.ImageState.STOP);
-            uploadImageView.setBgImage(R.mipmap.aa);
-            uploadImageView.setRadio(20);
-            ll_photo.addView(uploadImageView);
-        }
+//    private void initPgsImageViewLayout(){
+//        handler = new MHandler();
+//        ll_photo = (LinearLayout) findViewById(R.id.ll_photo);
+//        int screenWidth = DisplayUtil.getScreenWidth(this);
+//        LinearLayout.LayoutParams lp;
+//        for (int i = 0; i < 4; i++) {
+//            MXProgressImageView uploadImageView = new MXProgressImageView(this);
+//            lp = (LinearLayout.LayoutParams) uploadImageView.getLayoutParams();
+//            if(lp == null)
+//                lp = new LinearLayout.LayoutParams(screenWidth / 4, screenWidth / 4, 1);
+//            lp.setMargins(5, 10, 5, 10);
+//            uploadImageView.setLayoutParams(lp);
+//            uploadImageView.setTag(i);
+//            uploadImageView.setPgbType(MXProgressImageView.CIRCLE);
+//            uploadImageView.setUploadState(MXProgressImageView.ImageState.STOP);
+//            uploadImageView.setBgImage(R.mipmap.aa);
+//            uploadImageView.setRadio(20);
+//            ll_photo.addView(uploadImageView);
+//        }
+//
+//        for (int i = 0; i < 4; i++) {
+//            final MXProgressImageView uiv = (MXProgressImageView) ll_photo.getChildAt(i);
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    long sleepTime = 1;
+//                    for (int i = 0; i < 101; i++) {
+//                        if (uiv.isRunning()) {
+//                            handler.obtainMessage(1, i, (Integer) uiv.getTag()).sendToTarget();
+//                            sleepTime++;
+//                        } else {
+//                            i--;
+//                        }
+//                        try {
+//                            Thread.sleep(sleepTime);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }).start();
+//        }
+//    }
 
-        for (int i = 0; i < 4; i++) {
-            final MXProgressImageView uiv = (MXProgressImageView) ll_photo.getChildAt(i);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    long sleepTime = 1;
-                    for (int i = 0; i < 101; i++) {
-                        if (uiv.isRunning()) {
-                            handler.obtainMessage(1, i, (Integer) uiv.getTag()).sendToTarget();
-                            sleepTime++;
-                        } else {
-                            i--;
-                        }
-                        try {
-                            Thread.sleep(sleepTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }).start();
-        }
+    private void initLl_content(){
+        ll_photo = (MXSelectResLayout) findViewById(R.id.ll_photo);
+        List<String> imglist = new ArrayList<>();
+        imglist.add("/storage/emulated/0/report_clue/photo/20160804_132447.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102838.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102719.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160803_154419.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_173954.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_171224.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170228.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170105.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170035.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165910.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165702.jpg");
+        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165418.jpg");
+        ll_photo.setImgList(imglist);
+        ll_photo.setItemWidth(DisplayUtil.getScreenWidth(this) / 4 + 10);
     }
 
     private void initFlowLayout(){

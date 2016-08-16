@@ -60,6 +60,8 @@ public class BitmapUtils {
     public static Bitmap drawRoundBmp(Bitmap src, float corner){
         if(src == null)
             return null;
+        else if(src.isRecycled())
+            return src;
         Bitmap output = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
         Paint paint = new Paint();

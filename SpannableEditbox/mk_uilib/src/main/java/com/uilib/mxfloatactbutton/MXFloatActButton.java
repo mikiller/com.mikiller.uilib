@@ -42,6 +42,7 @@ public class MXFloatActButton extends FloatingActionButton{
 
     public void setSrcText(String srcText) {
         this.srcText = srcText;
+        invalidate();
     }
 
     public int getTextColor() {

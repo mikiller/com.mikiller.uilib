@@ -17,6 +17,12 @@
             android:src="@mipmap/camera"/>
 
         <ImageView
+            android:id="@+id/iv_video"
+            style="@style/icon_style"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/video"/>
+
+        <ImageView
             android:id="@+id/iv_record"
             style="@style/icon_style"
             android:layout_marginLeft="10dp"
@@ -50,6 +56,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 </LinearLayout>
