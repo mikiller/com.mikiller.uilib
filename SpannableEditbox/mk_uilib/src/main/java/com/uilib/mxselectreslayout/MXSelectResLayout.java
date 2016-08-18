@@ -7,13 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.uilib.R;
-import com.uilib.utils.DisplayUtil;
+import com.uilib.uploadimageview.MXProgressImageView;
 
 import java.util.List;
 
@@ -35,8 +34,8 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
         this.toolbarClickListener = toolbarClickListener;
     }
 
-    public void setItemClickListener(ResRcvAdapter.onItemClickListener listener){
-        ((ResRcvAdapter)rcv_res.getAdapter()).setOnItemClickListener(listener);
+    public void setOnItemStateListener(ResRcvAdapter.onItemStateListener listener){
+        ((ResRcvAdapter)rcv_res.getAdapter()).setOnItemStateListener(listener);
     }
 
     public MXSelectResLayout(Context context) {
@@ -78,12 +77,16 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
 
     }
 
-    public List<String> getImgList(){
-        return ((ResRcvAdapter)rcv_res.getAdapter()).getImgs();
+    public List<ResItemData> getData(){
+        return ((ResRcvAdapter)rcv_res.getAdapter()).getData();
     }
 
-    public void setImgList(List<String> list){
-        ((ResRcvAdapter)rcv_res.getAdapter()).setImgs(list);
+    public void setData(List<ResItemData> list){
+        ((ResRcvAdapter)rcv_res.getAdapter()).setData(list);
+    }
+
+    public void updateData(ResItemData itemData, int position){
+        ((ResRcvAdapter)rcv_res.getAdapter()).updateItemData(itemData, position);
     }
 
     public void setItemWidth(int width){

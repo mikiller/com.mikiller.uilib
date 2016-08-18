@@ -2,9 +2,7 @@ package com.uilib.mxselectreslayout;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.widget.ImageView;
 import com.uilib.R;
 import com.uilib.uploadimageview.MXProgressImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,25 +19,41 @@ import java.util.List;
  */
 public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHolder> {
     Context mContext;
-    List<String> imgs;
+//    List<String> imgs;
+    List<ResItemData> data;
     int itemWidth;
-    onItemClickListener onItemClickListener;
+    onItemStateListener onItemStateListener;
 
-    public ResRcvAdapter.onItemClickListener getOnItemClickListener() {
-        return onItemClickListener;
+    public onItemStateListener getOnItemDeleteListener() {
+        return onItemStateListener;
     }
 
-    public void setOnItemClickListener(ResRcvAdapter.onItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public void setOnItemStateListener(onItemStateListener onItemDeleteListener) {
+        this.onItemStateListener = onItemDeleteListener;
     }
 
-    public List<String> getImgs() {
-        return imgs;
+    //    public List<String> getImgs() {
+//        return imgs;
+//    }
+//
+//    public void setImgs(List<String> imgs) {
+//        this.imgs = new ArrayList<>(imgs);
+//        notifyDataSetChanged();
+//    }
+
+
+    public List<ResItemData> getData() {
+        return data;
     }
 
-    public void setImgs(List<String> imgs) {
-        this.imgs = new ArrayList<>(imgs);
+    public void setData(List<ResItemData> data) {
+        this.data = data;
         notifyDataSetChanged();
+    }
+
+    public void updateItemData(ResItemData itemData, int position){
+        data.get(position).update(itemData);
+        notifyItemChanged(position);
     }
 
     public int getItemWidth() {
@@ -51,9 +64,15 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
         this.itemWidth = itemWidth;
     }
 
-    public ResRcvAdapter(Context context, List<String> imgs) {
-        mContext = context;
-        this.imgs = imgs;
+//    public ResRcvAdapter(Context context, List<String> imgs) {
+//        mContext = context;
+//        this.imgs = imgs;
+//    }
+
+
+    public ResRcvAdapter(Context mContext, List<ResItemData> data) {
+        this.mContext = mContext;
+        this.data = data;
     }
 
     @Override
@@ -68,23 +87,62 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
 //        holder.iv_pic.post(new Runnable() {
 //            @Override
 //            public void run() {
-                setIvPicImg(holder, position);
-        holder.iv_pic.setOnClickListener(new View.OnClickListener() {
+        setIvPicData(holder, position);
+//        holder.iv_pic.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int pos = holder.getLayoutPosition();
+//                if(onItemDeleteListener != null)
+//                    onItemDeleteListener.onPicClick(v, pos, data.get(pos).imgPath);
+//            }
+//        });
+        holder.iv_pic.setListener(new MXProgressImageView.onViewStateListener() {
+            int pos = holder.getLayoutPosition();
             @Override
-            public void onClick(View v) {
-                int pos = holder.getLayoutPosition();
-                if(onItemClickListener != null)
-                    onItemClickListener.onPicClick(v, pos, imgs.get(pos));
+            public void onStop() {
+                data.get(pos).setUploadState(MXProgressImageView.ImageState.STOP);
+                if(onItemStateListener != null)
+                    onItemStateListener.onStop(pos);
+            }
+
+            @Override
+            public void onStart() {
+                data.get(pos).setUploadState(MXProgressImageView.ImageState.START);
+                if(onItemStateListener != null)
+                    onItemStateListener.onStart(pos);
+            }
+
+            @Override
+            public void onPause() {
+                data.get(pos).setUploadState(MXProgressImageView.ImageState.PAUSE);
+                if(onItemStateListener != null)
+                    onItemStateListener.onPause(pos);
+            }
+
+            @Override
+            public void onFailed() {
+                data.get(pos).setUploadState(MXProgressImageView.ImageState.FAILED);
+                if(onItemStateListener != null)
+                    onItemStateListener.onFailed(pos);
+            }
+
+            @Override
+            public void onSuccess() {
+                data.get(pos).setUploadState(MXProgressImageView.ImageState.SUCCESS);
+                if(onItemStateListener != null)
+                    onItemStateListener.onSuccess(pos);
             }
         });
+
         holder.iv_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int pos = holder.getLayoutPosition();
-                if(onItemClickListener != null)
-                    onItemClickListener.onDelete(pos, imgs.get(pos));
-                imgs.remove(pos);
+                data.remove(pos);
                 notifyItemRemoved(pos);
+                if(onItemStateListener != null)
+                    onItemStateListener.onDelete(pos);
+
             }
         });
 //            }
@@ -92,18 +150,20 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
 
     }
 
-    private void setIvPicImg(ResViewHolder holder, int position){
+    private void setIvPicData(ResViewHolder holder, int position){
 
 //        List<String> pathList = new ArrayList<>(imgs);
-        if(imgs == null || imgs.size() == 0)
+        if(data == null || data.size() == 0)
             return;
 
-        String path = imgs.get(position);
-            if (path.endsWith(".aac")) {
+        ResItemData itemData = data.get(position);
+            if (itemData.imgPath.endsWith(".aac")) {
                 holder.iv_pic.setBgImage(R.mipmap.audio);
             } else{
-                holder.iv_pic.setFilePath(path);
+                holder.iv_pic.setFilePath(itemData.imgPath);
             }
+        holder.iv_pic.setUploadState(itemData.uploadState);
+        holder.iv_pic.setProgress(itemData.progress);
     }
 
     private Bitmap getVidioBitmap(String path, int width, int height, int microKind)
@@ -126,7 +186,7 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
 
     @Override
     public int getItemCount() {
-        return imgs == null ? 0 : imgs.size();
+        return data == null ? 0 : data.size();
     }
 
     public static class ResViewHolder extends RecyclerView.ViewHolder{
@@ -148,8 +208,12 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
         }
     }
 
-    public static interface onItemClickListener{
-        void onPicClick(View v, int position, String filePath);
-        void onDelete(int position, String filePath);
+    public static interface onItemStateListener {
+        void onDelete(int position);
+        void onStop(int position);
+        void onStart(int position);
+        void onPause(int position);
+        void onFailed(int position);
+        void onSuccess(int position);
     }
 }
