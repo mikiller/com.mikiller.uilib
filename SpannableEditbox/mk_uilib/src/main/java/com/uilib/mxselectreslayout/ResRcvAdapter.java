@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import com.uilib.R;
 import com.uilib.uploadimageview.MXProgressImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,12 +26,23 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
     int itemWidth;
     onItemStateListener onItemStateListener;
 
+    boolean canDelete = true;
+
     public onItemStateListener getOnItemDeleteListener() {
         return onItemStateListener;
     }
 
     public void setOnItemStateListener(onItemStateListener onItemDeleteListener) {
         this.onItemStateListener = onItemDeleteListener;
+    }
+
+    public boolean isCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
+        notifyDataSetChanged();
     }
 
     //    public List<String> getImgs() {
@@ -47,7 +60,7 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
     }
 
     public void setData(List<ResItemData> data) {
-        this.data = data;
+        this.data = new ArrayList<>(data);
         notifyDataSetChanged();
     }
 
@@ -72,7 +85,8 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
 
     public ResRcvAdapter(Context mContext, List<ResItemData> data) {
         this.mContext = mContext;
-        this.data = data;
+        if(data != null)
+            this.data = new ArrayList<>(data);
     }
 
     @Override
@@ -84,18 +98,7 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
 
     @Override
     public void onBindViewHolder(final ResViewHolder holder, final int position) {
-//        holder.iv_pic.post(new Runnable() {
-//            @Override
-//            public void run() {
-        setIvPicData(holder, position);
-//        holder.iv_pic.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int pos = holder.getLayoutPosition();
-//                if(onItemDeleteListener != null)
-//                    onItemDeleteListener.onPicClick(v, pos, data.get(pos).imgPath);
-//            }
-//        });
+        setIvPicData(holder, holder.getLayoutPosition());
         holder.iv_pic.setListener(new MXProgressImageView.onViewStateListener() {
             int pos = holder.getLayoutPosition();
             @Override
@@ -140,6 +143,7 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
                 int pos = holder.getLayoutPosition();
                 data.remove(pos);
                 notifyItemRemoved(pos);
+
                 if(onItemStateListener != null)
                     onItemStateListener.onDelete(pos);
 
@@ -151,37 +155,27 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
     }
 
     private void setIvPicData(ResViewHolder holder, int position){
-
 //        List<String> pathList = new ArrayList<>(imgs);
         if(data == null || data.size() == 0)
             return;
-
         ResItemData itemData = data.get(position);
             if (itemData.imgPath.endsWith(".aac")) {
                 holder.iv_pic.setBgImage(R.mipmap.audio);
             } else{
                 holder.iv_pic.setFilePath(itemData.imgPath);
             }
-        holder.iv_pic.setUploadState(itemData.uploadState);
         holder.iv_pic.setProgress(itemData.progress);
+        if(holder.iv_pic.getUploadState() == MXProgressImageView.ImageState.PAUSE)
+            itemData.setUploadState(MXProgressImageView.ImageState.PAUSE);
+        if(itemData.uploadState == MXProgressImageView.ImageState.SUCCESS && itemData.progress == 0)
+            itemData.setUploadState(MXProgressImageView.ImageState.STOP);
+        holder.iv_pic.setUploadState(itemData.uploadState);
+//        holder.iv_delete.setVisibility(canDelete ? View.VISIBLE : View.GONE);
+        holder.iv_delete.setVisibility(isPicStop(holder.iv_pic) ? View.VISIBLE : View.GONE);
     }
 
-    private Bitmap getVidioBitmap(String path, int width, int height, int microKind)
-    {
-        // 定義一個Bitmap對象bitmap；
-        Bitmap bitmap = null;
-
-        // ThumbnailUtils類的截取的圖片是保持原始比例的，但是本人發現顯示在ImageView控件上有时候有部分沒顯示出來；
-        // 調用ThumbnailUtils類的靜態方法createVideoThumbnail獲取視頻的截圖；
-        bitmap = ThumbnailUtils.createVideoThumbnail(path, microKind);
-
-        // 調用ThumbnailUtils類的靜態方法extractThumbnail將原圖片（即上方截取的圖片）轉化為指定大小；
-        // 最後一個參數的具體含義我也不太清楚，因為是閉源的；
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-
-        // 放回bitmap对象；
-        return bitmap;
-
+    private boolean isPicStop(MXProgressImageView pic){
+        return pic.getUploadState() == MXProgressImageView.ImageState.STOP || pic.getUploadState() == MXProgressImageView.ImageState.FAILED;
     }
 
     @Override
@@ -202,6 +196,7 @@ public class ResRcvAdapter extends RecyclerView.Adapter<ResRcvAdapter.ResViewHol
             if(lp == null){
                 lp = new RecyclerView.LayoutParams(itemWidth, itemWidth);
             }
+            iv_pic.setAuto(true);
             lp.width = itemWidth;
             lp.height = itemWidth;
             itemView.setLayoutParams(lp);

@@ -12,6 +12,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.Executors;
+
 /**
  * Created by Mikiller on 2016/8/5.
  */
@@ -74,4 +79,20 @@ public class BitmapUtils {
         src.recycle();
         return output;
     }
+
+//    public static Bitmap getBmpFromUrl(final String urlStr){
+//        Executors.newCachedThreadPool().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    URL url = new URL(urlStr);
+//                    Bitmap bmp = BitmapFactory.decodeStream(url.openStream());
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//    }
 }

@@ -108,20 +108,21 @@ public class MainActivity extends Activity {
 
     private void initLl_content(){
         ll_photo = (MXSelectResLayout) findViewById(R.id.ll_photo);
-        List<String> imglist = new ArrayList<>();
-        imglist.add("/storage/emulated/0/report_clue/photo/20160804_132447.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102838.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102719.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160803_154419.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_173954.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_171224.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170228.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170105.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170035.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165910.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165702.jpg");
-        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165418.jpg");
-        ll_photo.setImgList(imglist);
+//        List<>
+//        List<String> imglist = new ArrayList<>();
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160804_132447.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102838.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160804_102719.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160803_154419.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_173954.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_171224.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170228.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170105.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_170035.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165910.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165702.jpg");
+//        imglist.add("/storage/emulated/0/report_clue/photo/20160802_165418.jpg");
+//        ll_photo.setData(imglist);
         ll_photo.setItemWidth(DisplayUtil.getScreenWidth(this) / 4 + 10);
     }
 

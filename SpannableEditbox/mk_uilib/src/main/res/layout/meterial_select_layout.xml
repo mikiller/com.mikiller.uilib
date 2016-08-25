@@ -20,7 +20,7 @@
             android:id="@+id/iv_video"
             style="@style/icon_style"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/video"/>
+            android:src="@mipmap/icon_video"/>
 
         <ImageView
             android:id="@+id/iv_record"

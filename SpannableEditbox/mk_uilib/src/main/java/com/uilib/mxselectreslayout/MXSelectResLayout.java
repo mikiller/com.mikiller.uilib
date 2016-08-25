@@ -38,6 +38,10 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
         ((ResRcvAdapter)rcv_res.getAdapter()).setOnItemStateListener(listener);
     }
 
+    public void setCanDelete(boolean canDelete){
+        ((ResRcvAdapter)rcv_res.getAdapter()).setCanDelete(canDelete);
+    }
+
     public MXSelectResLayout(Context context) {
         super(context);
         initView(context, null, 0);
@@ -69,11 +73,12 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
         rcv_res = (RecyclerView) findViewById(R.id.rcv_res);
         WrapLinearLayoutManager layoutMgr = new WrapLinearLayoutManager(context);
         layoutMgr.setOrientation(LinearLayoutManager.HORIZONTAL);
+        layoutMgr.setAutoMeasureEnabled(true);
         rcv_res.setLayoutManager(layoutMgr);
         rcv_res.setHasFixedSize(true);
         ResRcvAdapter adapter = new ResRcvAdapter(context, null);
         rcv_res.setAdapter(adapter);
-        rcv_res.setItemAnimator(new DefaultItemAnimator());
+        rcv_res.setItemAnimator(new NoAlphaAnimator());
 
     }
 
@@ -91,6 +96,14 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
 
     public void setItemWidth(int width){
         ((ResRcvAdapter)rcv_res.getAdapter()).setItemWidth(width);
+    }
+
+    public int getItemWidth(){
+        return ((ResRcvAdapter)rcv_res.getAdapter()).getItemWidth();
+    }
+
+    public void getLayoutHeight(){
+        ((ResRcvAdapter)rcv_res.getAdapter()).notifyDataSetChanged();
     }
 
     @Override

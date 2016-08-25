@@ -1,5 +1,7 @@
 package com.uilib.mxselectreslayout;
 
+import android.util.Log;
+
 import com.uilib.uploadimageview.MXProgressImageView;
 
 import java.io.Serializable;

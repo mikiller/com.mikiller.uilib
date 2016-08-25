@@ -11,6 +11,7 @@ import android.media.audiofx.NoiseSuppressor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -50,6 +51,7 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
     private Matrix matrix;
     private boolean needMatrix = false;
     private boolean needUpdate;
+    private boolean isAuto = false;
 
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
@@ -146,7 +148,10 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         return uploadState;
     }
 
-    public void setUploadState(ImageState uploadState) {
+    public synchronized void setUploadState(ImageState uploadState) {
+//        if(this.uploadState == ImageState.PAUSE) {
+//            return;
+//        }
         this.uploadState = uploadState;
     }
 
@@ -156,6 +161,15 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     public void setListener(onViewStateListener listener) {
         this.listener = listener;
+    }
+
+    public boolean isAuto() {
+        return isAuto;
+    }
+
+    public void setAuto(boolean auto) {
+        isAuto = auto;
+        isRunning = isAuto;
     }
 
     private void updateBgBmp() {
@@ -186,6 +200,7 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
                     needMatrix = false;
                 }
                 needUpdate = false;
+                setTag(Bitmap.createBitmap(bgBmp));
                 MXProgressImageView.this.post(new Runnable() {
                     @Override
                     public void run() {
@@ -206,22 +221,27 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         setPgsBarVisibility();
-
-        tv_wait.setVisibility(uploadState == ImageState.STOP ? View.VISIBLE : View.GONE);
-        ll_refresh.setVisibility(uploadState == ImageState.FAILED ? View.VISIBLE : View.GONE);
-
-        GradientDrawable gd = (GradientDrawable) mask.getBackground();
-        gd.setCornerRadius(radio);
-        mask.setBackgroundDrawable(gd);
+        tv_wait.setVisibility(uploadState == ImageState.STOP ? VISIBLE : GONE);
+        ll_refresh.setVisibility(uploadState == ImageState.FAILED ? VISIBLE : GONE);
+        mask.setVisibility(uploadState == ImageState.SUCCESS ? GONE : VISIBLE);
+        if (needUpdate) {
+            GradientDrawable gd = (GradientDrawable) mask.getBackground();
+            gd.setCornerRadius(radio);
+            mask.setBackgroundDrawable(gd);
+            updateBgBmp();
+        }
     }
+
+
 
     private void setPgsBarVisibility() {
         switch (pgbType) {
             case 0:
-                linePgsBar.setVisibility((uploadState == ImageState.START || uploadState == ImageState.PAUSE) ? View.VISIBLE : View.GONE);
+                linePgsBar.setVisibility((uploadState == ImageState.START || uploadState == ImageState.PAUSE) ? VISIBLE : GONE);
                 break;
             case 1:
-                circlePgsBar.setVisibility((uploadState == ImageState.START || uploadState == ImageState.PAUSE) ? View.VISIBLE : View.GONE);
+                circlePgsBar.setVisibility((uploadState == ImageState.START || uploadState == ImageState.PAUSE) ? VISIBLE : GONE);
+                circlePgsBar.setRunning(uploadState == ImageState.START);
                 break;
             default:
                 break;
@@ -231,14 +251,17 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
     @Override
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
-        if(needUpdate){
-            updateBgBmp();
-        }else{
-            if (needMatrix) {
-                canvas.drawBitmap(bgBmp, matrix, null);
-            } else
-                canvas.drawBitmap(bgBmp, 0, 0, null);
-        }
+
+//            if (needUpdate) {
+//                updateBgBmp();
+//            } else {
+        if (bgBmp == null || bgBmp.isRecycled())
+            return;
+
+        if (needMatrix) {
+            canvas.drawBitmap(bgBmp, matrix, null);
+        } else
+            canvas.drawBitmap(bgBmp, 0, 0, null);
 
 
 //        if (bgBmp != null && !bgBmp.isRecycled()) {
@@ -325,7 +348,8 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         if (v.getId() == R.id.ll_refresh) {
             onRestart(v);
         } else if (v.getId() == R.id.tv_wait) {
-            onStart(v);
+            if(!isAuto)
+                onStart(v);
         } else if (v.getId() == R.id.pgb_circle) {
             circlePgsBar.onSwitchClicked(v);
             if (isRunning()) {
@@ -340,19 +364,18 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     protected void onStop() {
         uploadState = ImageState.STOP;
-        tv_wait.setVisibility(View.VISIBLE);
-        mask.setVisibility(View.VISIBLE);
+        tv_wait.setVisibility(VISIBLE);
         setProgress(0);
         circlePgsBar.setRunning(false);
         setPgsBarVisibility();
-        ll_refresh.setVisibility(View.GONE);
+        ll_refresh.setVisibility(GONE);
         if (listener != null)
             listener.onStop();
     }
 
     protected void onStart(View v) {
         uploadState = ImageState.START;
-        v.setVisibility(View.GONE);
+        v.setVisibility(GONE);
         setPgsBarVisibility();
         circlePgsBar.setRunning(true);
         if (listener != null)
@@ -378,7 +401,7 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     protected void onFailed() {
         uploadState = ImageState.FAILED;
-        ll_refresh.setVisibility(View.VISIBLE);
+        ll_refresh.setVisibility(VISIBLE);
         setProgress(0);
         setPgsBarVisibility();
         if (listener != null) {
@@ -388,7 +411,6 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
 
     protected void onSuccess() {
         uploadState = ImageState.SUCCESS;
-        mask.setVisibility(View.GONE);
         setPgsBarVisibility();
         if (listener != null)
             listener.onSuccess();

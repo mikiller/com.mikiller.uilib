@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodSubtype;
 
 import com.uilib.R;
 
@@ -113,6 +114,7 @@ public class MXProgressbar extends View {
 
     public void setRunning(boolean isRunning){
         this.isRunning = isRunning;
+        this.invalidate();
     }
 
     public void onSwitchClicked(View v){
