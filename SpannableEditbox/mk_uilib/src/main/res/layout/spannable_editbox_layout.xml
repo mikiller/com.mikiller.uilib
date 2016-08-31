@@ -23,7 +23,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="left"
         android:layout_alignParentBottom="true"
         android:background="@color/toolbarColor"
         >
@@ -32,12 +32,14 @@
             android:id="@+id/action_undo"
             style="@style/icon_style"
             android:src="@drawable/selector_btn_undo"
+            android:visibility="gone"
             />
 
         <ImageView
             android:id="@+id/action_redo"
             style="@style/icon_style"
             android:src="@drawable/selector_btn_redo"
+            android:visibility="gone"
             />
 
         <ImageView

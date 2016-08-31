@@ -58,4 +58,16 @@ public class NetResDisplayLayout extends LinearLayout {
     public void setData(List<String> list){
         ((NetResAdapter)rcv_res.getAdapter()).setData(list);
     }
+
+    public List<String> getData(){
+        return ((NetResAdapter)rcv_res.getAdapter()).getData();
+    }
+
+    public void setOnItemClickListener(NetResAdapter.OnItemClickListener listener){
+        ((NetResAdapter)rcv_res.getAdapter()).setItemClickListener(listener);
+    }
+
+    public void recyler(){
+        ((NetResAdapter)rcv_res.getAdapter()).recyler();
+    }
 }

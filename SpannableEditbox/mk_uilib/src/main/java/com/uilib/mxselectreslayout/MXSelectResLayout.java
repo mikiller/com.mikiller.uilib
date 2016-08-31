@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.uilib.R;
 import com.uilib.uploadimageview.MXProgressImageView;
+import com.uilib.utils.DisplayUtil;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
     private ImageView iv_camera, iv_video, iv_record, iv_files;
     private TextView tv_upload;
     private RecyclerView rcv_res;
+    private Context mContext;
 
     private onToolbarClickListener toolbarClickListener;
 
@@ -58,6 +60,7 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
     }
 
     private void initView(Context context, AttributeSet attrs, int defStyleAttr){
+        mContext = context;
         LayoutInflater.from(context).inflate(R.layout.meterial_select_layout, this, true);
         iv_camera = (ImageView) findViewById(R.id.iv_camera);
         iv_camera.setOnClickListener(this);
@@ -96,6 +99,8 @@ public class MXSelectResLayout extends LinearLayout implements View.OnClickListe
 
     public void setItemWidth(int width){
         ((ResRcvAdapter)rcv_res.getAdapter()).setItemWidth(width);
+        rcv_res.getLayoutManager().setMeasuredDimension(MeasureSpec.makeMeasureSpec(DisplayUtil.getScreenWidth(mContext), MeasureSpec.EXACTLY)
+        , MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY));
     }
 
     public int getItemWidth(){

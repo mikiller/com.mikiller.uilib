@@ -111,6 +111,8 @@ public class MXFloatActButton extends FloatingActionButton{
         Paint paint = new Paint();
         paint.setColor(textColor);
         paint.setTextSize(textSize);
+        if(srcText.equals("0"))
+            srcText = "";
         switch (textGravity){
             case LEFT_TOP:
                 canvas.drawText(srcText, getMeasuredWidth() / 2 - textMargin, getMeasuredHeight() / 2 + (textSize - textMargin), paint);

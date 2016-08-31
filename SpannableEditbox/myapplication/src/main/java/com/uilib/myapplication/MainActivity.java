@@ -14,6 +14,8 @@ import com.uilib.checkabletag.CheckableTag;
 import com.uilib.mxfloatactbutton.MXFloatActButton;
 import com.uilib.mxflowlayout.MXFlowLayout;
 import com.uilib.mxselectreslayout.MXSelectResLayout;
+import com.uilib.netresdisplaylayout.NetResAdapter;
+import com.uilib.netresdisplaylayout.NetResDisplayLayout;
 import com.uilib.uploadimageview.MXProgressImageView;
 import com.uilib.utils.DisplayUtil;
 
@@ -32,6 +34,8 @@ public class MainActivity extends Activity {
 
     MXFlowLayout fl_tags;
     MXFloatActButton fab;
+
+    NetResDisplayLayout netlayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +57,14 @@ public class MainActivity extends Activity {
 //
 //        edt.focus();
 //        initPgsImageViewLayout();
+//
+//        initLl_content();
+//
+//        initFlowLayout();
+//
+//        initFloatActButton();
 
-        initLl_content();
-
-        initFlowLayout();
-
-        initFloatActButton();
+        initNetLayout();
 
     }
 
@@ -105,6 +111,17 @@ public class MainActivity extends Activity {
 //            }).start();
 //        }
 //    }
+
+    private void initNetLayout(){
+        netlayout = (NetResDisplayLayout) findViewById(R.id.netlayout);
+        List<String> datas = new ArrayList<>();
+        datas.add("http://10.27.134.66/preview/nova/2016/08/26/2dbf5e3de6374907b1a70944fe8bb12a/thumb_m/IMG_0138.JPG");
+        datas.add("http://10.27.134.66/preview/nova/2016/08/26/2dbf5e3de6374907b1a70944fe8bb12a/IMG_0139.MOV_thumb.jpg");
+        datas.add("http://10.27.134.66/preview/nova/2016/08/26/36d0cd68e17642f7bf19ce81e72d394b/IMG_0094.MOV_thumb.jpg");
+        datas.add("http://10.27.134.66/preview/nova/2016/08/26/36d0cd68e17642f7bf19ce81e72d394b/thumb_m/IMG_0136.JPG");
+//        NetResAdapter adapter = new NetResAdapter(this, datas);
+        netlayout.setData(datas);
+    }
 
     private void initLl_content(){
         ll_photo = (MXSelectResLayout) findViewById(R.id.ll_photo);

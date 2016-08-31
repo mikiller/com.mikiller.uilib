@@ -33,49 +33,56 @@
     <!--span:pgbType="circle"-->
     <!--/>-->
 
-    <com.uilib.mxselectreslayout.MXSelectResLayout
-        android:id="@+id/ll_photo"
+    <!--<com.uilib.mxselectreslayout.MXSelectResLayout-->
+        <!--android:id="@+id/ll_photo"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <!--<com.uilib.checkabletag.CheckableTag-->
+        <!--android:id="@+id/ckb_tag1"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/ll_photo"-->
+        <!--span:isChecked="true"-->
+        <!--span:needClose="false"/>-->
+
+    <!--<com.uilib.checkabletag.CheckableTag-->
+        <!--android:id="@+id/ckb_tag2"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/ll_photo"-->
+        <!--android:layout_toRightOf="@id/ckb_tag1"-->
+        <!--/>-->
+
+    <!--<com.uilib.mxflowlayout.MXFlowLayout-->
+        <!--android:id="@+id/fl_tags"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@id/ckb_tag1"-->
+        <!--span:hint="@string/app_name"-->
+        <!--span:hintColor="@color/tagBgGray"-->
+        <!--span:hintSize="14sp">-->
+
+    <!--</com.uilib.mxflowlayout.MXFlowLayout>-->
+
+    <!--<com.uilib.mxfloatactbutton.MXFloatActButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/ckb_tag1"-->
+        <!--span:backgroundTint="@color/colorPrimary"-->
+        <!--span:txtColor="@android:color/white"-->
+        <!--span:txtSize="16sp"-->
+        <!--span:textMargin="5dp"-->
+        <!--span:textGravity="RIGHT_BOTTOM"-->
+        <!--android:src="@drawable/pause"-->
+        <!--android:clickable="true"/>-->
+
+    <com.uilib.netresdisplaylayout.NetResDisplayLayout
+        android:id="@+id/netlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
 
-    <com.uilib.checkabletag.CheckableTag
-        android:id="@+id/ckb_tag1"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ll_photo"
-        span:isChecked="true"
-        span:needClose="false"/>
-
-    <com.uilib.checkabletag.CheckableTag
-        android:id="@+id/ckb_tag2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ll_photo"
-        android:layout_toRightOf="@id/ckb_tag1"
-        />
-
-    <com.uilib.mxflowlayout.MXFlowLayout
-        android:id="@+id/fl_tags"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_below="@id/ckb_tag1"
-        span:hint="@string/app_name"
-        span:hintColor="@color/tagBgGray"
-        span:hintSize="14sp">
-
-    </com.uilib.mxflowlayout.MXFlowLayout>
-
-    <com.uilib.mxfloatactbutton.MXFloatActButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ckb_tag1"
-        span:backgroundTint="@color/colorPrimary"
-        span:txtColor="@android:color/white"
-        span:txtSize="16sp"
-        span:textMargin="5dp"
-        span:textGravity="RIGHT_BOTTOM"
-        android:src="@drawable/pause"
-        android:clickable="true"/>
+    </com.uilib.netresdisplaylayout.NetResDisplayLayout>
 
 </RelativeLayout>

@@ -354,7 +354,11 @@ public class NoAlphaAnimator extends SimpleItemAnimator {
                     ViewCompat.setAlpha(view, 1);
                     ViewCompat.setTranslationX(view, 0);
                     ViewCompat.setTranslationY(view, 0);
-                    dispatchChangeFinished(changeInfo.oldHolder, true);
+                    try {
+                        dispatchChangeFinished(changeInfo.oldHolder, true);
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                    }
                     mChangeAnimations.remove(changeInfo.oldHolder);
                     dispatchFinishedWhenDone();
                 }
