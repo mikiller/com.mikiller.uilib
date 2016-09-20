@@ -7,82 +7,108 @@
     android:background="@android:color/white"
     tools:context="com.uilib.myapplication.MainActivity">
 
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="Hello World!" />-->
+    <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Hello World!"
+        android:visibility="gone"/>
 
-    <!--<com.uilib.inputlayout.InputRelativeLayout-->
-    <!--android:id="@+id/inputlayout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
+    <com.uilib.inputlayout.InputRelativeLayout
+    android:id="@+id/inputlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:visibility="gone">
 
-    <!--<com.uilib.spannableeditbox.SpannableEditbox-->
-    <!--android:id="@+id/edt"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--span:bold="true"-->
-    <!--span:italic="true"-->
-    <!--span:underLine="true" />-->
-    <!--</com.uilib.inputlayout.InputRelativeLayout>-->
+    <com.uilib.spannableeditbox.SpannableEditbox
+    android:id="@+id/edt"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    span:bold="true"
+    span:italic="true"
+    span:underLine="true"
+        android:visibility="gone"/>
+    </com.uilib.inputlayout.InputRelativeLayout>
 
     <!--<com.uilib.uploadimageview.MXUploadImageView-->
     <!--android:id="@+id/iv_upload"-->
     <!--android:layout_height="match_parent"-->
     <!--android:layout_width="match_parent"-->
     <!--span:pgbType="circle"-->
+        <!--android:visibility="gone"-->
     <!--/>-->
 
-    <!--<com.uilib.mxselectreslayout.MXSelectResLayout-->
-        <!--android:id="@+id/ll_photo"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
+    <com.uilib.mxselectreslayout.MXSelectResLayout
+        android:id="@+id/ll_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
-    <!--<com.uilib.checkabletag.CheckableTag-->
-        <!--android:id="@+id/ckb_tag1"-->
-        <!--android:layout_width="100dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/ll_photo"-->
-        <!--span:isChecked="true"-->
-        <!--span:needClose="false"/>-->
+    <com.uilib.checkabletag.CheckableTag
+        android:id="@+id/ckb_tag1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_photo"
+        span:isChecked="true"
+        span:needClose="false"
+        android:visibility="gone"/>
 
-    <!--<com.uilib.checkabletag.CheckableTag-->
-        <!--android:id="@+id/ckb_tag2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/ll_photo"-->
-        <!--android:layout_toRightOf="@id/ckb_tag1"-->
-        <!--/>-->
+    <com.uilib.checkabletag.CheckableTag
+        android:id="@+id/ckb_tag2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_photo"
+        android:layout_toRightOf="@id/ckb_tag1"
+        android:visibility="gone"/>
 
-    <!--<com.uilib.mxflowlayout.MXFlowLayout-->
-        <!--android:id="@+id/fl_tags"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@id/ckb_tag1"-->
-        <!--span:hint="@string/app_name"-->
-        <!--span:hintColor="@color/tagBgGray"-->
-        <!--span:hintSize="14sp">-->
+    <com.uilib.mxflowlayout.MXFlowLayout
+        android:id="@+id/fl_tags"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ckb_tag1"
+        span:hint="@string/app_name"
+        span:hintColor="@color/tagBgGray"
+        span:hintSize="14sp"
+        android:visibility="gone">
 
-    <!--</com.uilib.mxflowlayout.MXFlowLayout>-->
+    </com.uilib.mxflowlayout.MXFlowLayout>
 
-    <!--<com.uilib.mxfloatactbutton.MXFloatActButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/ckb_tag1"-->
-        <!--span:backgroundTint="@color/colorPrimary"-->
-        <!--span:txtColor="@android:color/white"-->
-        <!--span:txtSize="16sp"-->
-        <!--span:textMargin="5dp"-->
-        <!--span:textGravity="RIGHT_BOTTOM"-->
-        <!--android:src="@drawable/pause"-->
-        <!--android:clickable="true"/>-->
+    <com.uilib.mxfloatactbutton.MXFloatActButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ckb_tag1"
+        span:backgroundTint="@color/colorPrimary"
+        span:txtColor="@android:color/white"
+        span:txtSize="16sp"
+        span:textMargin="5dp"
+        span:textGravity="RIGHT_BOTTOM"
+        android:src="@drawable/pause"
+        android:clickable="true"
+        android:visibility="gone"/>
 
     <com.uilib.netresdisplaylayout.NetResDisplayLayout
         android:id="@+id/netlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
     </com.uilib.netresdisplaylayout.NetResDisplayLayout>
 
+    <com.uilib.swipetoloadlayout.SwipeToLoadLayout
+        android:id="@+id/swipLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include android:id="@id/swipe_refresh_header"
+            layout="@layout/layout_google_hook_header" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <include android:id="@id/swipe_load_more_footer"
+            layout="@layout/layout_classic_footer" />
+
+    </com.uilib.swipetoloadlayout.SwipeToLoadLayout>
 </RelativeLayout>

@@ -10,4 +10,9 @@
     <color name="tagBgBlue">#2600bcf7</color>
     <color name="tagBgGray">#c8c8c8</color>
     <color name="rbtnSelectGray">#585858</color>
+
+    <color name="google_blue">#4285F4</color>
+    <color name="google_red">#EA4335</color>
+    <color name="google_green">#34A853</color>
+    <color name="google_yellow">#FBBC05</color>
 </resources>

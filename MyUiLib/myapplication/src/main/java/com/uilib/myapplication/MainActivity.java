@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Message;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -16,10 +18,15 @@ import com.uilib.mxflowlayout.MXFlowLayout;
 import com.uilib.mxselectreslayout.MXSelectResLayout;
 import com.uilib.netresdisplaylayout.NetResAdapter;
 import com.uilib.netresdisplaylayout.NetResDisplayLayout;
+import com.uilib.swipetoloadlayout.OnLoadMoreListener;
+import com.uilib.swipetoloadlayout.OnRefreshListener;
+import com.uilib.swipetoloadlayout.SwipeToLoadLayout;
 import com.uilib.uploadimageview.MXProgressImageView;
 import com.uilib.utils.DisplayUtil;
 
 import android.os.Handler;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +43,9 @@ public class MainActivity extends Activity {
     MXFloatActButton fab;
 
     NetResDisplayLayout netlayout;
+
+    SwipeToLoadLayout swipLayout;
+    RecyclerView swip_target;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +74,77 @@ public class MainActivity extends Activity {
 //
 //        initFloatActButton();
 
-        initNetLayout();
+//        initNetLayout();
 
+        initSwipLayout();
+    }
+
+    class ItemHolder extends RecyclerView.ViewHolder{
+        TextView text;
+        public ItemHolder(View itemView) {
+            super(itemView);
+//            text = new TextView(itemView.getContext());
+        }
+
+        public TextView getText() {
+            return text;
+        }
+
+        public void setText(TextView text) {
+            this.text = text;
+        }
+    }
+
+    private void initSwipLayout(){
+        swipLayout = (SwipeToLoadLayout) findViewById(R.id.swipLayout);
+        swip_target = (RecyclerView) findViewById(R.id.swipe_target);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        swip_target.setLayoutManager(layoutManager);
+//        swip_target.setAdapter(new RecyclerView.Adapter<ItemHolder>() {
+//            @Override
+//            public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//                return new ItemHolder(parent);
+//            }
+//
+//            @Override
+//            public void onBindViewHolder(ItemHolder holder, int position) {
+//
+//            }
+//
+//            @Override
+//            public int getItemCount() {
+//                return 2;
+//            }
+//
+//
+//        });
+
+        swipLayout.setSwipeStyle(SwipeToLoadLayout.STYLE.CLASSIC);
+        swipLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                swipLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "loadmore", Toast.LENGTH_SHORT).show();
+                        swipLayout.setLoadingMore(false);
+                    }
+                }, 2000l);
+            }
+        });
+
+        swipLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "refresh", Toast.LENGTH_SHORT).show();
+                        swipLayout.setRefreshing(false);
+                    }
+                }, 2000l);
+            }
+        });
     }
 
 //    private void initPgsImageViewLayout(){

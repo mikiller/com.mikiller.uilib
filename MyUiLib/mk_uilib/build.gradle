@@ -20,6 +20,7 @@ android {
 }
 
 repositories {
+    maven { url "https://jitpack.io" }
     flatDir{
         dirs 'libs'
     }
@@ -31,4 +32,5 @@ dependencies {
     compile(name: 'richeditor-release', ext: 'aar')
     compile 'com.android.support:appcompat-v7:23.+'
     compile 'com.android.support:design:23.+'
+    compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
 }
