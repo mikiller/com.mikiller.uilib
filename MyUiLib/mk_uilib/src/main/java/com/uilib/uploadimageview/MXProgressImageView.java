@@ -97,6 +97,8 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         tv_wait.setOnClickListener(this);
         ll_refresh = (LinearLayout) findViewById(R.id.ll_refresh);
         ll_refresh.setOnClickListener(this);
+
+        onStop();
     }
 
     public int getPgbType() {
@@ -366,7 +368,7 @@ public class MXProgressImageView extends RelativeLayout implements View.OnClickL
         uploadState = ImageState.STOP;
         tv_wait.setVisibility(VISIBLE);
         setProgress(0);
-        circlePgsBar.setRunning(false);
+//        circlePgsBar.setRunning(false);
         setPgsBarVisibility();
         ll_refresh.setVisibility(GONE);
         if (listener != null)

@@ -6,6 +6,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -334,9 +335,11 @@ public class SwipeToLoadLayout extends ViewGroup {
             // no child return
             return;
         } else if (0 < childNum && childNum < 4) {
-            mHeaderView = findViewById(R.id.swipe_refresh_header);
+            if(mHeaderView == null)
+                mHeaderView = findViewById(R.id.swipe_refresh_header);
             mTargetView = findViewById(R.id.swipe_target);
-            mFooterView = findViewById(R.id.swipe_load_more_footer);
+            if(mFooterView == null)
+                mFooterView = findViewById(R.id.swipe_load_more_footer);
         } else {
             // more than three children: unsupported!
             throw new IllegalStateException("Children num must equal or less than 3");
@@ -727,6 +730,20 @@ public class SwipeToLoadLayout extends ViewGroup {
         } else {
             Log.e(TAG, "Load more footer view must be an implement of SwipeLoadTrigger");
         }
+    }
+
+    public void setTargetView(View view){
+        if(mTargetView != null && mTargetView != view){
+            removeView(mTargetView);
+        }
+        if(mTargetView != view){
+            this.mTargetView = view;
+            addView(mTargetView);
+        }
+    }
+
+    public View getTargetView(){
+        return mTargetView;
     }
 
     /**
