@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.audiofx.NoiseSuppressor;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -14,12 +15,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uilib.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -33,17 +40,30 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     private boolean bold;
     private boolean italic;
     private boolean underLine;
-    private boolean foregroundColor;
+    private int foregroundColor = 0xffffff;
     private boolean needToolbar;
+    private boolean undoAndRedo;
+    private int boldBg = NO_ID;
+    private int italicBg = NO_ID;
+    private int underLineBg = NO_ID;
+    private int mainTxtBg = NO_ID;
+    private int leadBg = NO_ID;
+    private int postBg = NO_ID;
+    private int undoBg = NO_ID;
+    private int redoBg = NO_ID;
 
     private RichEditor editText;
-    private ImageView undo, redo, btnBold, btnItalic, btnUnderLine;//, btnForegroundColor;
+    private ImageButton undo, redo, btnMainTxt, btnLead, btnPost;
+    private CheckBox ckbBold, ckbItalic, ckbUnderLine;
+    private TextView mainTxtCount, leadTextCount;
     private LinearLayout toolbar;
 
     private boolean isBold = false, isItalic = false, isUnderLine = false;
     private int textColor = Color.BLACK;
 
-//    private String content;
+    private String oldStr = "", mContents = "";
+    private String tag1 = "【正文】", tag2 = "【导语】", tag3 = "【编后】";
+    private ArrayList alertStrIds = new ArrayList<Integer>();
 
     public SpannableEditbox(Context context) {
         super(context);
@@ -74,9 +94,27 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
             else if(R.styleable.SpannableEditbox_underLine == attr)
                 underLine = typedArray.getBoolean(attr, false);
             else if(R.styleable.SpannableEditbox_foregroundColor == attr)
-                foregroundColor = typedArray.getBoolean(attr, false);
+                foregroundColor = typedArray.getColor(attr, 0xffffff);
             else if(R.styleable.SpannableEditbox_showToolbar == attr)
                 needToolbar = typedArray.getBoolean(attr, false);
+            else if(R.styleable.SpannableEditbox_undoAndRedo == attr)
+                undoAndRedo = typedArray.getBoolean(attr, false);
+            else if(R.styleable.SpannableEditbox_boldBg == attr)
+                boldBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_italicBg == attr)
+                italicBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_underLineBg == attr)
+                underLineBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_mainTxtBg == attr)
+                mainTxtBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_leadBg == attr)
+                leadBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_postBg == attr)
+                postBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_undoBg == attr)
+                undoBg = typedArray.getResourceId(attr, NO_ID);
+            else if(R.styleable.SpannableEditbox_redoBg == attr)
+                redoBg = typedArray.getResourceId(attr, NO_ID);
             else {
                 //do something if need
                 break;
@@ -85,22 +123,129 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
         typedArray.recycle();
     }
 
+    private int checkTag(){
+        int strId = 0;
+        if(alertStrIds.size() == 0)
+            return strId;
+        if((isTagBeCleared(tag1) || isTagBeCleared(tag2) || isTagBeCleared(tag3)) && alertStrIds.contains(R.string.richedt_alert_cleartag)){
+            strId = R.string.richedt_alert_cleartag;
+        }
+        else if(checkTagOrder() && alertStrIds.contains(R.string.richedt_alert_order)){
+            strId = R.string.richedt_alert_order;
+        }
+        else if(checkMainTag() && alertStrIds.contains(R.string.richedt_alert_notext_before_main)){
+            strId = R.string.richedt_alert_notext_before_main;
+        }else if(checkTagCount() && alertStrIds.contains(R.string.richedt_alert_norepeat)){
+            strId = R.string.richedt_alert_norepeat;
+        }
+        alertStrIds.remove((Object) strId);
+        return strId;
+    }
+
+    private boolean isTagBeCleared(String tag){
+        if(!mContents.contains(tag)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkTagOrder(){
+        int pos1 = getTagPos(tag1), pos2 = getTagPos(tag2), pos3 = getTagPos(tag3);
+        if((pos3 != -1) && (pos3 < (pos2 + pos1)) || ((pos2 != -1) && (pos2 < pos1))){
+            return true;
+        }
+        return false;
+    }
+
+    private int getTagPos(String tag){
+        return editText.getText().replace("\n", "").indexOf(tag);
+    }
+
+    private boolean checkMainTag(){
+        if(getTagPos(tag1) > 0){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkTagCount(){
+        int t2 = editText.getText().replace("\n", "").lastIndexOf(tag2), t3 = editText.getText().replace("\n", "").lastIndexOf(tag3);
+        int t = editText.getText().length();
+        if((editText.getText().split(tag1).length > 2) || (editText.getText().split(tag2).length > 2) || (editText.getText().split(tag3).length > 2)){
+            return true;
+        }else if(t2 != getTagPos(tag2) || t3 != getTagPos(tag3)){
+                return true;
+
+        }
+        return false;
+    }
+
+    private int getMainCount(){
+        if(getTagPos(tag1) == -1)
+            return 0;
+        else if(getTagPos(tag2) == -1){
+            if(getTagPos(tag3) == -1 ){
+                return getTextCount(tag1);
+            }
+            return getTextCount(tag1, tag3);
+        }else{
+            return getTextCount(tag1, tag2);
+        }
+    }
+
+    private int getLeadCount(){
+        if(getTagPos(tag2) == -1)
+            return 0;
+        else if(getTagPos(tag3) == -1){
+            return getTextCount(tag2);
+        }else{
+            return getTextCount(tag2, tag3);
+        }
+    }
+
+    private int getTextCount(String tag1, String tag2){
+        int pos1 = getTagPos(tag1) + tag1.length(), pos2 = getTagPos(tag2);
+        return pos2 - pos1;
+    }
+
+    private int getTextCount(String tag){
+        int pos = getTagPos(tag) + tag.length();
+        return editText.getText().replace("\n", "").length() - pos;
+    }
+
     private void initView(Context context){
+        alertStrIds.add(R.string.richedt_alert_cleartag);
+        alertStrIds.add(R.string.richedt_alert_norepeat);
+        alertStrIds.add(R.string.richedt_alert_notext_before_main);
+        alertStrIds.add(R.string.richedt_alert_order);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.spannable_editbox_layout, this, true);
         editText = (RichEditor) findViewById(R.id.editor);
-//        editText.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
-//            @Override
-//            public void onTextChange(String s) {
-//                content = s;
-//            }
-//        });
+        editText.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+            @Override
+            public void onTextChange(String os, String cs) {
+                oldStr = os;
+                mContents = cs;
+                int id = checkTag();
+                if(id != 0){
+                    Toast.makeText(getContext(), getResources().getText(id), Toast.LENGTH_SHORT).show();
+                }
+                int mainCnt = getMainCount(), leadCnt = getLeadCount();
+                if(mainCnt < 0)
+                    mainCnt = 0;
+                if(leadCnt < 0)
+                    leadCnt = 0;
+                int mainTime = (int)(mainCnt * 60f / 330f + 0.5), leadTime = (int)(leadCnt * 60f / 330f + 0.5);
+                mainTxtCount.setText(String.format(getResources().getString(R.string.maintxt_model), mainCnt, mainTime));
+                leadTextCount.setText(String.format(getResources().getString(R.string.lead_model), leadCnt, leadTime));
+            }
+        });
         editText.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
             @Override
             public void onStateChangeListener(String s, List<RichEditor.Type> list) {
-                setBtnState(btnBold, (isBold = list.contains(RichEditor.Type.BOLD)) ? R.mipmap.bold_selected : R.mipmap.bold);
-                setBtnState(btnItalic, (isItalic = list.contains(RichEditor.Type.ITALIC)) ? R.mipmap.italic_selected : R.mipmap.italic);
-                setBtnState(btnUnderLine, (isUnderLine = list.contains(RichEditor.Type.UNDERLINE)) ? R.mipmap.underline_selected : R.mipmap.underline);
+                ckbBold.setChecked(list.contains(RichEditor.Type.BOLD));
+                ckbItalic.setChecked(list.contains(RichEditor.Type.ITALIC));
+                ckbUnderLine.setChecked(list.contains(RichEditor.Type.UNDERLINE));
             }
         });
         editText.setOnTouchListener(new OnTouchListener() {
@@ -121,44 +266,67 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
             }
         });
         editText.focusEditor();
-        btnBold = (ImageView) findViewById(R.id.action_bold);
-        btnBold.setOnClickListener(this);
-        btnBold.setVisibility(bold ? View.VISIBLE : View.GONE);
-        btnItalic = (ImageView) findViewById(R.id.action_italic);
-        btnItalic.setOnClickListener(this);
-        btnItalic.setVisibility(italic ? View.VISIBLE : View.GONE);
-        btnUnderLine = (ImageView) findViewById(R.id.action_underline);
-        btnUnderLine.setOnClickListener(this);
-        btnUnderLine.setVisibility(underLine ? View.VISIBLE : View.GONE);
-        undo = (ImageView) findViewById(R.id.action_undo);
+        ckbBold = (CheckBox) findViewById(R.id.action_bold);
+        ckbBold.setOnClickListener(this);
+        ckbBold.setVisibility(bold ? View.VISIBLE : View.GONE);
+        ckbBold.setBackgroundResource(boldBg == NO_ID ? R.drawable.selector_default_spanedt_bold : boldBg);
+        ckbItalic = (CheckBox) findViewById(R.id.action_italic);
+        ckbItalic.setOnClickListener(this);
+        ckbItalic.setVisibility(italic ? View.VISIBLE : View.GONE);
+        ckbItalic.setBackgroundResource(italicBg == NO_ID ? R.drawable.selector_default_spanedt_italic : italicBg);
+        ckbUnderLine = (CheckBox) findViewById(R.id.action_underline);
+        ckbUnderLine.setOnClickListener(this);
+        ckbUnderLine.setVisibility(underLine ? View.VISIBLE : View.GONE);
+        ckbUnderLine.setBackgroundResource(underLineBg == NO_ID ? R.drawable.selector_default_spanedt_underline : underLineBg);
+        btnMainTxt = (ImageButton) findViewById(R.id.action_mainTxt);
+        btnMainTxt.setOnClickListener(this);
+        btnMainTxt.setVisibility(mainTxtBg == NO_ID ? GONE : VISIBLE);
+        btnMainTxt.setBackgroundResource(mainTxtBg);
+        btnLead = (ImageButton) findViewById(R.id.action_lead);
+        btnLead.setOnClickListener(this);
+        btnLead.setVisibility(leadBg == NO_ID ? GONE : VISIBLE);
+        btnLead.setBackgroundResource(leadBg);
+        btnPost = (ImageButton) findViewById(R.id.action_post);
+        btnPost.setOnClickListener(this);
+        btnPost.setVisibility(postBg == NO_ID ? GONE : VISIBLE);
+        btnPost.setBackgroundResource(postBg);
+        undo = (ImageButton) findViewById(R.id.action_undo);
         undo.setOnClickListener(this);
-        redo = (ImageView) findViewById(R.id.action_redo);
+        undo.setVisibility(undoAndRedo ? View.VISIBLE : View.GONE);
+        undo.setBackgroundResource(undoBg == NO_ID ? R.drawable.selector_default_spanedt_undo : undoBg);
+        redo = (ImageButton) findViewById(R.id.action_redo);
         redo.setOnClickListener(this);
+        redo.setVisibility(undoAndRedo ? View.VISIBLE : View.GONE);
+        redo.setBackgroundResource(redoBg == NO_ID ? R.drawable.selector_default_spanedt_redo : redoBg);
+        mainTxtCount = (TextView) findViewById(R.id.tv_mainTextCount);
+        leadTextCount = (TextView) findViewById(R.id.tv_LeadCount);
         toolbar = (LinearLayout) findViewById(R.id.toolbar);
         toolbar.setVisibility(needToolbar ? View.VISIBLE : View.GONE);
+        toolbar.setBackgroundColor(foregroundColor);
     }
 
     @Override
     public void onClick(View v) {
         if(R.id.action_bold == v.getId()){
-            setBtnState(v, (isBold = !isBold) ? R.mipmap.bold_selected : R.mipmap.bold);
+            isBold = !isBold;
             editText.setBold();
         }else if(R.id.action_italic == v.getId()){
-            setBtnState(v, (isItalic = !isItalic) ? R.mipmap.italic_selected : R.mipmap.italic);
+            isItalic = !isItalic;
             editText.setItalic();
         }else if(R.id.action_underline == v.getId()){
-            setBtnState(v, (isUnderLine = !isUnderLine) ? R.mipmap.underline_selected : R.mipmap.underline);
+            isUnderLine = !isUnderLine;
             editText.setUnderline();
         }else if(R.id.action_undo == v.getId()){
             editText.undo();
         }else if(R.id.action_redo == v.getId()){
             editText.redo();
+        }else if(R.id.action_mainTxt == v.getId()){
+            editText.insertMainTxt();
+        }else if(R.id.action_lead == v.getId()){
+            editText.insertLead();
+        }else if(R.id.action_post == v.getId()){
+            editText.insertPost();
         }
-    }
-
-    private void setBtnState(View btn, int res){
-        ((ImageView)btn).setImageDrawable(getResources().getDrawable(res));
-//        btn.setBackgroundDrawable(getResources().getDrawable(res));
     }
 
     @Deprecated
@@ -205,4 +373,5 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     public void focus(){
         editText.focusEditor();
     }
+
 }

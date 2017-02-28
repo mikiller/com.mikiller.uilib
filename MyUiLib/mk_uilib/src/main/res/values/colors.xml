@@ -10,6 +10,8 @@
     <color name="tagBgBlue">#2600bcf7</color>
     <color name="tagBgGray">#c8c8c8</color>
     <color name="rbtnSelectGray">#585858</color>
+    <color name="sliptLine">#dcdcdc</color>
+    <color name="hintTxt">#8c8c8c</color>
 
     <color name="google_blue">#4285F4</color>
     <color name="google_red">#EA4335</color>

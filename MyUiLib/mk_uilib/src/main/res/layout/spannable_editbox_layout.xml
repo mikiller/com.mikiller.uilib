@@ -19,6 +19,39 @@
         re:editorHeight="400" />
 
     <LinearLayout
+        android:id="@+id/ll_statCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@+id/editor"
+        android:gravity="right"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp">
+
+        <TextView
+            android:id="@+id/tv_mainTextCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正文: 0 字 0 秒"
+            android:textColor="@color/hintTxt"/>
+
+        <ImageView
+            android:layout_width="1px"
+            android:layout_height="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/sliptLine" />
+
+        <TextView
+            android:id="@+id/tv_LeadCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="导语: 0 字 0 秒"
+            android:textColor="@color/hintTxt"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/toolbar"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -28,38 +61,50 @@
         android:background="@color/toolbarColor"
         >
 
-        <ImageView
+        <ImageButton
             android:id="@+id/action_undo"
             style="@style/icon_style"
-            android:src="@drawable/selector_btn_undo"
-            android:visibility="gone"
+            android:background="@null"
             />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/action_redo"
             style="@style/icon_style"
-            android:src="@drawable/selector_btn_redo"
-            android:visibility="gone"
+            android:background="@null"
             />
 
-        <ImageView
+        <CheckBox
             android:id="@+id/action_bold"
             style="@style/icon_style"
-            android:src="@mipmap/bold"
             />
 
-        <ImageView
-            android:id="@+id/action_italic"
-            style="@style/icon_style"
-            android:src="@mipmap/italic"
-            />
-
-        <ImageView
+        <CheckBox
             android:id="@+id/action_underline"
             style="@style/icon_style"
-            android:src="@mipmap/underline"
             />
 
+        <CheckBox
+            android:id="@+id/action_italic"
+            style="@style/icon_style"
+            />
+
+        <ImageButton
+            android:id="@+id/action_mainTxt"
+            style="@style/icon_style"
+            android:background="@null"
+            />
+
+        <ImageButton
+            android:id="@+id/action_lead"
+            style="@style/icon_style"
+            android:background="@null"
+            />
+
+        <ImageButton
+            android:id="@+id/action_post"
+            style="@style/icon_style"
+            android:background="@null"
+            />
     </LinearLayout>
 
 </RelativeLayout>

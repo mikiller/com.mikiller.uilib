@@ -13,11 +13,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.uilib.checkabletag.CheckableTag;
+import com.uilib.inputlayout.InputRelativeLayout;
+import com.uilib.inputlayout.KeyboardStateListener;
 import com.uilib.mxfloatactbutton.MXFloatActButton;
 import com.uilib.mxflowlayout.MXFlowLayout;
 import com.uilib.mxselectreslayout.MXSelectResLayout;
 import com.uilib.netresdisplaylayout.NetResAdapter;
 import com.uilib.netresdisplaylayout.NetResDisplayLayout;
+import com.uilib.spannableeditbox.SpannableEditbox;
 import com.uilib.swipetoloadlayout.OnLoadMoreListener;
 import com.uilib.swipetoloadlayout.OnRefreshListener;
 import com.uilib.swipetoloadlayout.SwipeToLoadLayout;
@@ -51,21 +54,21 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        final SpannableEditbox edt = (SpannableEditbox) findViewById(R.id.edt);
-//
-//        ((InputRelativeLayout)findViewById(R.id.inputlayout)).setKeyboardStateListener(new KeyboardStateListener() {
-//            @Override
-//            public void onKeyboardShown() {
-//                edt.showToolbar();
-//            }
-//
-//            @Override
-//            public void onKeyboardHiden() {
-//                edt.hideToolbar();
-//            }
-//        });
-//
-//        edt.focus();
+        final SpannableEditbox edt = (SpannableEditbox) findViewById(R.id.edt);
+
+        ((InputRelativeLayout)findViewById(R.id.inputlayout)).setKeyboardStateListener(new KeyboardStateListener() {
+            @Override
+            public void onKeyboardShown() {
+                edt.showToolbar();
+            }
+
+            @Override
+            public void onKeyboardHiden() {
+                edt.hideToolbar();
+            }
+        });
+
+        edt.focus();
 //        initPgsImageViewLayout();
 //
 //        initLl_content();
@@ -76,7 +79,7 @@ public class MainActivity extends Activity {
 
 //        initNetLayout();
 
-        initSwipLayout();
+        //initSwipLayout();
     }
 
     class ItemHolder extends RecyclerView.ViewHolder{

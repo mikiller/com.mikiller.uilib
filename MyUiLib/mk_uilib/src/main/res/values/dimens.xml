@@ -5,6 +5,12 @@
     <dimen name="icon_height">34dp</dimen>
     <dimen name="icon_margin">10dp</dimen>
 
+    <dimen name="indicator_right_padding">10.0dip</dimen>
+    <dimen name="indicator_corner_radius">12.0dip</dimen>
+    <dimen name="indicator_internal_padding">4.0dip</dimen>
+    <dimen name="header_footer_left_right_padding">30.0dip</dimen>
+    <dimen name="header_footer_top_bottom_padding">12.0dip</dimen>
+
     <dimen name="load_more_footer_height_classic">60dp</dimen>
 
     <dimen name="refresh_header_height_twitter">80dp</dimen>
