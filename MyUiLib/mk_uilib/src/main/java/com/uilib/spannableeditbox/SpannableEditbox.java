@@ -28,6 +28,8 @@ import com.uilib.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -158,7 +160,8 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     }
 
     private int getTagPos(String tag){
-        return editText.getText().replace("\n", "").indexOf(tag);
+        return getStrByReplace(editText.getText(), "\n|\\s*").indexOf(tag);
+//        return editText.getText().replaceAll("\\n\\s*", "").indexOf(tag);
     }
 
     private boolean checkMainTag(){
@@ -169,7 +172,8 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
     }
 
     private boolean checkTagCount(){
-        int t2 = editText.getText().replace("\n", "").lastIndexOf(tag2), t3 = editText.getText().replace("\n", "").lastIndexOf(tag3);
+//        int t2 = editText.getText().replaceAll("\\n\\s*", "").lastIndexOf(tag2), t3 = editText.getText().replaceAll("\\n\\s*", "").lastIndexOf(tag3);
+        int t2 = getStrByReplace(editText.getText(), "\n|\\s*").lastIndexOf(tag2), t3 = getStrByReplace(editText.getText(), "\n|\\s*").lastIndexOf(tag3);
         int t = editText.getText().length();
         if((editText.getText().split(tag1).length > 2) || (editText.getText().split(tag2).length > 2) || (editText.getText().split(tag3).length > 2)){
             return true;
@@ -210,7 +214,15 @@ public class SpannableEditbox extends LinearLayout implements View.OnClickListen
 
     private int getTextCount(String tag){
         int pos = getTagPos(tag) + tag.length();
-        return editText.getText().replace("\n", "").length() - pos;
+        return getStrByReplace(editText.getText(), "\n|\\s*").length() - pos;
+    }
+
+    private String getStrByReplace(String src, String pattern){
+        if(src.isEmpty())
+            return src;
+        Pattern ptn = Pattern.compile(pattern);
+        Matcher matcher = ptn.matcher(src);
+        return matcher.replaceAll("");
     }
 
     private void initView(Context context){
